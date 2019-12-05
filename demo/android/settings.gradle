@@ -1,0 +1,5 @@
+rootProject.name = 'pili_startkit'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'
+include ':pili-streaming-react-native'
+project(':pili-streaming-react-native').projectDir = new File(settingsDir, '../node_modules/pili-streaming-react-native/android/pili-react-native')
