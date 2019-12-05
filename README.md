@@ -5,7 +5,7 @@
 ##### 1. 通过 npm 安装依赖包
 
 ```shell
-npm i --save pili-react-native
+npm i --save pili-streaming-react-native
 ```
 
 ##### 2. 添加 android 支持
