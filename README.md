@@ -1,4 +1,4 @@
-# Pili SDK for react-native
+# Pili 推流 SDK for react-native
 
 ### 安装
 
