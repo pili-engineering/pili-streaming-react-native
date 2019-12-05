@@ -10,6 +10,47 @@ npm i --save pili-react-native
 
 ##### 2. 添加 android 支持
 
+1. 在项目根目录的 settings.gradle 中添加如下代码：
+
+```java
+include ':pili-streaming-react-native'
+project(':pili-streaming-react-native').projectDir = new File(settingsDir, '../node_modules/pili-streaming-react-native/android/pili-react-native')
+```
+
+2. 在 app 的 build.gradle 文件中添加如下依赖：
+
+```java
+implementation "com.facebook.react:react-native:+" // From node_modules.
+implementation project(':pili-streaming-react-native')
+```
+
+3. 在 `ReactApplication` 的子类中定义 ReactNativeHost 对象，并重写其 getPackages 方法，将 PiliPackage 对象添加进去，示例代码如下：
+
+```java
+private final ReactNativeHost mReactNativeHost =
+      new ReactNativeHost(this) {
+        @Override
+        public boolean getUseDeveloperSupport() {
+          return BuildConfig.DEBUG;
+        }
+
+        @Override
+        protected List<ReactPackage> getPackages() {
+          @SuppressWarnings("UnnecessaryLocalVariable")
+          List<ReactPackage> packages = new PackageList(this).getPackages();
+          // Packages that cannot be autolinked yet can be added manually here, for example:
+          // packages.add(new MyReactNativePackage());
+          packages.add(new PiliPackage());
+          return packages;
+        }
+
+        @Override
+        protected String getJSMainModuleName() {
+          return "index";
+        }
+      };
+```
+
 ##### 3. 添加 ios 支持
 
 环境配置：[Cocoapod 安装教程](https://cocoapods.org)
