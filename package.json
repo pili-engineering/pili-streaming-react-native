@@ -1,0 +1,33 @@
+{
+  "name": "pili-streaming-react-native",
+  "version": "0.0.2",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pili-engineering/pili-streaming-react-native.git"
+  },
+  "keywords": [
+    "pili",
+    "react-native"
+  ],
+  "author": "qiniu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pili-engineering/pili-streaming-react-native/issues"
+  },
+  "homepage": "https://github.com/pili-engineering/pili-streaming-react-native#readme",
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-react": "^7.7.4",
+    "rollup": "^1.27.8",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  }
+}
