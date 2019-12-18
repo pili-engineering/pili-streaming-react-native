@@ -227,6 +227,8 @@ PODS:
   - RNFileSelector (1.0.0):
     - FileBrowser
     - React
+  - RNFS (2.16.2):
+    - React
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -261,6 +263,7 @@ DEPENDENCIES:
   - ReactCommon/jscallinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNFileSelector (from `../node_modules/react-native-file-selector/ios`)
+  - RNFS (from `../node_modules/react-native-fs`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -323,6 +326,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNFileSelector:
     :path: "../node_modules/react-native-file-selector/ios"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -361,8 +366,9 @@ SPEC CHECKSUMS:
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   RNFileSelector: 898821102ce11fdd59ed87a1cc3200edb7192fd6
+  RNFS: 0d4191b1052bef9ce70deff00a5b4169c62bbd9b
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: d067447892fa1032a8e9a7677884c21cff767243
+PODFILE CHECKSUM: 18349a4e26291862991517b92e4df25fd1dc3334
 
 COCOAPODS: 1.8.4
