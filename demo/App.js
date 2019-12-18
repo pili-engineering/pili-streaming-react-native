@@ -6,6 +6,7 @@ import merge from 'merge'
 import React, { Component } from 'react'
 import { SafeAreaView, Text, StatusBar, ScrollView, View, Button, Platform, PermissionsAndroid, TextInput } from 'react-native'
 import { consts, Streaming } from 'pili-streaming-react-native'
+import RNFileSelector from 'react-native-file-selector'
 
 const isAndroid = Platform.OS === 'android'
 
@@ -71,9 +72,9 @@ export default class App extends Component {
             ? consts.videoH264Profiles_android.baseline
             : consts.videoH264Profiles_iOS.baselineAutoLevel
           ),
-          customVideoEncodeSize: { // TODO: 确认下取值是不是合理
-            width: 1024,
-            height: 800
+          customVideoEncodeSize: {
+            width: 800,
+            height: 1024
           }
         },
         audioStreamingSetting: {
@@ -102,7 +103,7 @@ export default class App extends Component {
         },
         quicEnable: false,
         bitrateAdjustMode: consts.bitrateAdjustModes.auto,
-        adaptiveBitrateRange: { // TODO: 确认下取值是否合理
+        adaptiveBitrateRange: {
           minBitrate: 1024,
           maxBitrate: 1024*1024,
         },
@@ -110,6 +111,8 @@ export default class App extends Component {
         streamInfoUpdateInterval: 5,
       },
     },
+    fileSelectActive: false,
+    fileSelected: null,
   }
 
   handleStateChange = state => this.setState({ state })
@@ -126,6 +129,13 @@ export default class App extends Component {
       this.setState({ streamingConfigError: e && e.message })
     }
   }
+
+  handleSelectFile = () => this.setState({ fileSelectActive: true })
+  handleFileSelected = fileSelected => this.setState({
+    fileSelectActive: false,
+    fileSelected
+  })
+  handleFileSelectCancelled = () => this.setState({ fileSelectActive: false })
 
   componentDidMount() {
     if (isAndroid) {
@@ -196,6 +206,7 @@ export default class App extends Component {
         <SafeAreaView style={{ display: 'flex', flex: 1 }}>
           <Streaming {...props} />
           <View style={{ flex: 1, backgroundColor : 'white'}}>
+
             <TextInput
               multiline
               numberOfLines={5}
@@ -204,6 +215,16 @@ export default class App extends Component {
             />
             {streamingConfigErrorText}
             <Button title="提交" onPress={this.handleStreamingConfigInputSubmit} />
+
+            <Button title="选择文件" onPress={this.handleSelectFile} />
+            <Text>File selected: {this.state.fileSelected}</Text>
+            <RNFileSelector
+              title="请选择文件"
+              visible={this.state.fileSelectActive}
+              onDone={this.handleFileSelected}
+              onCancel={this.handleFileSelectCancelled}
+            />
+
             <ScrollView style={{ flex: 1 }}>
               <Text>Pili@ReactNative</Text>
               <Text>State: {stateText}</Text>

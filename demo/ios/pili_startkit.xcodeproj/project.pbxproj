@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* pili_startkitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* pili_startkitTests.m */; };
-		058D4F339938121D64CFD855 /* libPods-pili_startkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DCA416919AA28661BB7349CD /* libPods-pili_startkit.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -17,9 +16,10 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* pili_startkitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* pili_startkitTests.m */; };
+		36508E1326A138ED900A1A1B /* Pods_pili_startkitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6DE2ECD1FA5D65E2B0DC94D /* Pods_pili_startkitTests.framework */; };
+		782FF6C5ED0B427E200F1494 /* Pods_pili_startkit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 127AD65EB96FDBF23C6D36BB /* Pods_pili_startkit.framework */; };
 		AAC22C1B97A5DEF1828926FA /* libPods-pili_startkit-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7EC18BFF7AB5056CEA160FA /* libPods-pili_startkit-tvOSTests.a */; };
 		D0C1FCE93EF6745F9BCA296B /* libPods-pili_startkit-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EF02FE85B20E24988ACDCFFC /* libPods-pili_startkit-tvOS.a */; };
-		FD0C4197EC2C402988FBAECA /* libPods-pili_startkitTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 99336E075756A6289C18792A /* libPods-pili_startkitTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +44,7 @@
 		00E356EE1AD99517003FC87E /* pili_startkitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pili_startkitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* pili_startkitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pili_startkitTests.m; sourceTree = "<group>"; };
+		127AD65EB96FDBF23C6D36BB /* Pods_pili_startkit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_pili_startkit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* pili_startkit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pili_startkit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = pili_startkit/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pili_startkit/AppDelegate.m; sourceTree = "<group>"; };
@@ -58,13 +59,12 @@
 		6922CE5F1707F7306777E8FF /* Pods-pili_startkit-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pili_startkit-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-pili_startkit-tvOSTests/Pods-pili_startkit-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		6C9AD8217CCBE476D16629F0 /* Pods-pili_startkit-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pili_startkit-tvOS.release.xcconfig"; path = "Target Support Files/Pods-pili_startkit-tvOS/Pods-pili_startkit-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		93BF5027C9B4D761E81CF447 /* Pods-pili_startkit-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pili_startkit-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-pili_startkit-tvOSTests/Pods-pili_startkit-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		99336E075756A6289C18792A /* libPods-pili_startkitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pili_startkitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8E083E64FEFCD5C99B3451B /* Pods-pili_startkit-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pili_startkit-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-pili_startkit-tvOS/Pods-pili_startkit-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		DCA416919AA28661BB7349CD /* libPods-pili_startkit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pili_startkit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		EF02FE85B20E24988ACDCFFC /* libPods-pili_startkit-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pili_startkit-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1048EE9A2E2D6F6629DC601 /* Pods-pili_startkit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pili_startkit.release.xcconfig"; path = "Target Support Files/Pods-pili_startkit/Pods-pili_startkit.release.xcconfig"; sourceTree = "<group>"; };
+		F6DE2ECD1FA5D65E2B0DC94D /* Pods_pili_startkitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_pili_startkitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7EC18BFF7AB5056CEA160FA /* libPods-pili_startkit-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pili_startkit-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE59B43BE8233AC7EE19323B /* Pods-pili_startkitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pili_startkitTests.release.xcconfig"; path = "Target Support Files/Pods-pili_startkitTests/Pods-pili_startkitTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -74,7 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FD0C4197EC2C402988FBAECA /* libPods-pili_startkitTests.a in Frameworks */,
+				36508E1326A138ED900A1A1B /* Pods_pili_startkitTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,7 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				058D4F339938121D64CFD855 /* libPods-pili_startkit.a in Frameworks */,
+				782FF6C5ED0B427E200F1494 /* Pods_pili_startkit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,10 +141,10 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				DCA416919AA28661BB7349CD /* libPods-pili_startkit.a */,
 				EF02FE85B20E24988ACDCFFC /* libPods-pili_startkit-tvOS.a */,
 				F7EC18BFF7AB5056CEA160FA /* libPods-pili_startkit-tvOSTests.a */,
-				99336E075756A6289C18792A /* libPods-pili_startkitTests.a */,
+				127AD65EB96FDBF23C6D36BB /* Pods_pili_startkit.framework */,
+				F6DE2ECD1FA5D65E2B0DC94D /* Pods_pili_startkitTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -465,13 +465,63 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-pili_startkit/Pods-pili_startkit-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/DoubleConversion/DoubleConversion.framework",
+				"${BUILT_PRODUCTS_DIR}/FBReactNativeSpec/FBReactNativeSpec.framework",
+				"${BUILT_PRODUCTS_DIR}/FileBrowser/FileBrowser.framework",
+				"${BUILT_PRODUCTS_DIR}/Folly/folly.framework",
 				"${PODS_ROOT}/PLMediaStreamingKit/Pod/Library/PLMediaStreamingKit.framework",
 				"${PODS_ROOT}/PLMediaStreamingKit/Pod/Library/HappyDNS.framework",
+				"${BUILT_PRODUCTS_DIR}/RCTTypeSafety/RCTTypeSafety.framework",
+				"${BUILT_PRODUCTS_DIR}/RNFileSelector/RNFileSelector.framework",
+				"${BUILT_PRODUCTS_DIR}/React-Core/React.framework",
+				"${BUILT_PRODUCTS_DIR}/React-CoreModules/CoreModules.framework",
+				"${BUILT_PRODUCTS_DIR}/React-RCTActionSheet/RCTActionSheet.framework",
+				"${BUILT_PRODUCTS_DIR}/React-RCTAnimation/RCTAnimation.framework",
+				"${BUILT_PRODUCTS_DIR}/React-RCTBlob/RCTBlob.framework",
+				"${BUILT_PRODUCTS_DIR}/React-RCTImage/RCTImage.framework",
+				"${BUILT_PRODUCTS_DIR}/React-RCTLinking/RCTLinking.framework",
+				"${BUILT_PRODUCTS_DIR}/React-RCTNetwork/RCTNetwork.framework",
+				"${BUILT_PRODUCTS_DIR}/React-RCTSettings/RCTSettings.framework",
+				"${BUILT_PRODUCTS_DIR}/React-RCTText/RCTText.framework",
+				"${BUILT_PRODUCTS_DIR}/React-RCTVibration/RCTVibration.framework",
+				"${BUILT_PRODUCTS_DIR}/React-cxxreact/cxxreact.framework",
+				"${BUILT_PRODUCTS_DIR}/React-jsi/jsi.framework",
+				"${BUILT_PRODUCTS_DIR}/React-jsiexecutor/jsireact.framework",
+				"${BUILT_PRODUCTS_DIR}/React-jsinspector/jsinspector.framework",
+				"${BUILT_PRODUCTS_DIR}/ReactCommon/ReactCommon.framework",
+				"${BUILT_PRODUCTS_DIR}/Yoga/yoga.framework",
+				"${BUILT_PRODUCTS_DIR}/glog/glog.framework",
+				"${BUILT_PRODUCTS_DIR}/pili-react-native/pili_react_native.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DoubleConversion.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBReactNativeSpec.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FileBrowser.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/folly.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PLMediaStreamingKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HappyDNS.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTTypeSafety.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RNFileSelector.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CoreModules.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTActionSheet.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTAnimation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTBlob.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTLinking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTNetwork.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTSettings.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTText.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RCTVibration.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/cxxreact.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/jsi.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/jsireact.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/jsinspector.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactCommon.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/yoga.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/glog.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pili_react_native.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
