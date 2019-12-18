@@ -3,10 +3,10 @@
  */
 
 import merge from 'merge'
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import { SafeAreaView, Text, StatusBar, ScrollView, View, Button, Platform, PermissionsAndroid, TextInput } from 'react-native'
 import { consts, Streaming } from 'pili-streaming-react-native'
-import RNFileSelector from 'react-native-file-selector'
+import { FileInput, AvCodecTypeInput, CameraResolutionInput, CameraFocusModeInput, CameraVideoOrientationInput, MicrophoneSampleRateInput, MicrophoneChannelInput, SwitchInput, VideoEncodeOrientationInput, VideoH264ProfileInput, BitrateAdjustModeInput, EncoderRCModeInput, CameraInput } from './components/Input'
 
 const isAndroid = Platform.OS === 'android'
 
@@ -99,7 +99,7 @@ export default class App extends Component {
         microphoneSteamingSetting: {
           sampleRate: consts.microphoneSampleRates.r16000,
           channel: consts.microphoneChannels.mono,
-          isAecEnable: true
+          isAecEnable: false
         },
         quicEnable: false,
         bitrateAdjustMode: consts.bitrateAdjustModes.auto,
@@ -111,8 +111,6 @@ export default class App extends Component {
         streamInfoUpdateInterval: 5,
       },
     },
-    fileSelectActive: false,
-    fileSelected: null,
   }
 
   handleStateChange = state => this.setState({ state })
@@ -130,12 +128,27 @@ export default class App extends Component {
     }
   }
 
-  handleSelectFile = () => this.setState({ fileSelectActive: true })
-  handleFileSelected = fileSelected => this.setState({
-    fileSelectActive: false,
-    fileSelected
-  })
-  handleFileSelectCancelled = () => this.setState({ fileSelectActive: false })
+  useStateOfPath = keyPath => {
+    const toMerge = {}
+    const keys = keyPath.split('.')
+    const lastKey = keys[keys.length - 1]
+    const lastObj = keys.slice(0, -1).reduce((obj, key) => {
+      return obj[key] = {}
+    }, toMerge)
+
+    const value = keys.reduce((obj, key) => obj[key], this.state)
+    const onChange = value => {
+      lastObj[lastKey] = value
+      const newState = merge.recursive(true, this.state, toMerge)
+      this.setState(newState)
+    }
+    return [value, onChange]
+  }
+
+  bindStateOfPath = keyPath => {
+    const [value, onChange] = this.useStateOfPath(keyPath)
+    return { value, onChange }
+  }
 
   componentDidMount() {
     if (isAndroid) {
@@ -199,42 +212,87 @@ export default class App extends Component {
         borderBottomWidth: 1,
       },
     }
+
     const streamingConfigText = JSON.stringify(streamingConfig, null, 2)
+
+    this.state.streamingConfig.audioMixFile.filePath
+
     return (
       <>
         <StatusBar barStyle="dark-content" />
         <SafeAreaView style={{ display: 'flex', flex: 1 }}>
           <Streaming {...props} />
-          <View style={{ flex: 1, backgroundColor : 'white'}}>
+          <ScrollView style={{ flex: 1, backgroundColor : 'white', padding: 10 }}>
 
             <TextInput
               multiline
               numberOfLines={5}
               value={streamingConfigInput}
               onChangeText={this.handleStreamingConfigInputChange}
+              placeholder={'请输入 JSON 格式的配置，如 { "camera": "front" }'}
             />
             {streamingConfigErrorText}
             <Button title="提交" onPress={this.handleStreamingConfigInputSubmit} />
 
-            <Button title="选择文件" onPress={this.handleSelectFile} />
-            <Text>File selected: {this.state.fileSelected}</Text>
-            <RNFileSelector
-              title="请选择文件"
-              visible={this.state.fileSelectActive}
-              onDone={this.handleFileSelected}
-              onCancel={this.handleFileSelectCancelled}
-            />
+            <SwitchInput label="开始推流" {...this.bindStateOfPath('streamingConfig.started')} />
+            <SwitchInput label="静音" {...this.bindStateOfPath('streamingConfig.muted')} />
+            <SwitchInput label="手动对焦" {...this.bindStateOfPath('streamingConfig.focus')} />
+            <CameraInput {...this.bindStateOfPath('streamingConfig.camera')} />
 
-            <ScrollView style={{ flex: 1 }}>
-              <Text>Pili@ReactNative</Text>
-              <Text>State: {stateText}</Text>
-              <Text>StreamInfo: {streamInfoText}</Text>
-              <Text>streamingConfig: </Text>
-              <Text>{streamingConfigText}</Text>
-            </ScrollView>
-          </View>
+            <AvCodecTypeInput {...this.bindStateOfPath('streamingConfig.profile.avCodecType')} />
+
+            <CameraResolutionInput {...this.bindStateOfPath('streamingConfig.profile.cameraStreamingSetting.resolution')} />
+            <CameraFocusModeInput {...this.bindStateOfPath('streamingConfig.profile.cameraStreamingSetting.focusMode')} />
+            <CameraVideoOrientationInput {...this.bindStateOfPath('streamingConfig.profile.cameraStreamingSetting.videoOrientation')} />
+
+            <MicrophoneSampleRateInput {...this.bindStateOfPath('streamingConfig.profile.microphoneSteamingSetting.sampleRate')} />
+            <MicrophoneChannelInput {...this.bindStateOfPath('streamingConfig.profile.microphoneSteamingSetting.channel')} />
+            <SwitchInput label="回音消除" {...this.bindStateOfPath('streamingConfig.profile.microphoneSteamingSetting.isAecEnable')} />
+
+            <VideoEncodeOrientationInput {...this.bindStateOfPath('streamingConfig.profile.videoStreamingSetting.encodeOrientation')} />
+            <VideoH264ProfileInput {...this.bindStateOfPath('streamingConfig.profile.videoStreamingSetting.h264Profile')} />
+            {/* TODO: customVideoEncodeSize */}
+
+            {/* TODO: audioStreamingSetting */}
+
+            <SwitchInput label="使用 QUIC 协议" {...this.bindStateOfPath('streamingConfig.profile.quicEnable')} />
+            <BitrateAdjustModeInput {...this.bindStateOfPath('streamingConfig.profile.bitrateAdjustMode')} />
+            {/* TODO: adaptiveBitrateRange */}
+            <EncoderRCModeInput {...this.bindStateOfPath('streamingConfig.profile.encoderRCMode')} />
+            {/* TODO: streamInfoUpdateInterval */}
+
+            <SwitchInput label="内置美颜" {...this.bindStateOfPath('streamingConfig.faceBeautyEnable')} />
+            {/* TODO: faceBeautySetting */}
+
+            <FileInput label="水印文件" {...this.bindStateOfPath('streamingConfig.watermarkSetting.src')} />
+            {/* TODO: watermarkSetting.alpha */}
+            {/* TODO: watermarkSetting.position */}
+            {/* TODO: watermarkSetting.size */}
+
+            <SwitchInput label="图片推流" {...this.bindStateOfPath('streamingConfig.pictureStreamingEnable')} />
+            <FileInput label="图片推流文件" {...this.bindStateOfPath('streamingConfig.pictureStreamingFile')} />
+
+            <SwitchInput label="开启闪光灯" {...this.bindStateOfPath('streamingConfig.torchEnable')} />
+            <SwitchInput label="截图" {...this.bindStateOfPath('streamingConfig.captureFrame')} />
+            <SwitchInput label="预览镜像设置" {...this.bindStateOfPath('streamingConfig.previewMirrorEnable')} />
+            <SwitchInput label="编码镜像设置" {...this.bindStateOfPath('streamingConfig.encodingMirrorEnable')} />
+
+            <SwitchInput label="播放混音文件" {...this.bindStateOfPath('streamingConfig.playMixAudio')} />
+            <FileInput label="混音文件" {...this.bindStateOfPath('streamingConfig.audioMixFile.filePath')} />
+            <SwitchInput label="混音文件循环播放" {...this.bindStateOfPath('streamingConfig.audioMixFile.loop')} />
+            {/* TODO: audioMixVolume */}
+
+            <SwitchInput label="混音功能" {...this.bindStateOfPath('streamingConfig.playbackEnable')} />
+
+            <Text>Pili@ReactNative</Text>
+            <Text>State: {stateText}</Text>
+            <Text>StreamInfo: {streamInfoText}</Text>
+            <Text>streamingConfig: </Text>
+            <Text>{streamingConfigText}</Text>
+          </ScrollView>
         </SafeAreaView>
       </>
     )
   }
 }
+
