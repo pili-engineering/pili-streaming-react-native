@@ -6,41 +6,8 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var React = require('react');
 var React__default = _interopDefault(React);
-var PropTypes = _interopDefault(require('prop-types'));
+var P = _interopDefault(require('prop-types'));
 var reactNative = require('react-native');
-
-/**
- * @file const defines for Pili SDK
- * @author nighca <nighca@live.cn>
- */
-// video encodings
-var videoEncoding240 = 0;
-var videoEncoding480 = 1;
-var videoEncoding544 = 2;
-var videoEncoding720 = 3;
-var videoEncoding1088 = 4; // streaming states
-
-var streamingStateReady = 0;
-var streamingStateConnecting = 1;
-var streamingStateStreaming = 2;
-var streamingStateShutdown = 3;
-var streamingStateError = 4;
-var streamingStateDisconnected = 5;
-
-var _const = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  videoEncoding240: videoEncoding240,
-  videoEncoding480: videoEncoding480,
-  videoEncoding544: videoEncoding544,
-  videoEncoding720: videoEncoding720,
-  videoEncoding1088: videoEncoding1088,
-  streamingStateReady: streamingStateReady,
-  streamingStateConnecting: streamingStateConnecting,
-  streamingStateStreaming: streamingStateStreaming,
-  streamingStateShutdown: streamingStateShutdown,
-  streamingStateError: streamingStateError,
-  streamingStateDisconnected: streamingStateDisconnected
-});
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -178,6 +145,156 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
+/**
+ * @file const defines for Pili SDK
+ * @author nighca <nighca@live.cn>
+ */
+// streaming states
+var streamingStates = {
+  ready: 0,
+  connecting: 1,
+  streaming: 2,
+  shutdown: 3,
+  error: 4,
+  disconnected: 5
+}; // avCodecType
+
+var avCodecTypes_iOS = {
+  PLH264EncoderType_AVFoundation: 0,
+  PLH264EncoderType_VideoToolbox: 1
+};
+var avCodecTypes_android = {
+  SW_VIDEO_WITH_HW_AUDIO_CODEC: 2,
+  SW_VIDEO_WITH_SW_AUDIO_CODEC: 3,
+  HW_VIDEO_SURFACE_AS_INPUT_WITH_HW_AUDIO_CODEC: 4,
+  HW_VIDEO_SURFACE_AS_INPUT_WITH_SW_AUDIO_CODEC: 5,
+  HW_VIDEO_YUV_AS_INPUT_WITH_HW_AUDIO_CODEC: 6,
+  HW_VIDEO_CODEC: 7,
+  // 纯视频推流
+  SW_VIDEO_CODEC: 8,
+  // 纯视频推流
+  HW_AUDIO_CODEC: 9,
+  // 纯音频推流
+  SW_AUDIO_CODEC: 10 // 纯音频推流
+
+};
+var avCodecTypes = _objectSpread2({}, avCodecTypes_iOS, {}, avCodecTypes_android); // camera resolution 相机分辨率
+
+var cameraResolutions_android = {
+  SMALL_RATIO_4_3: 0,
+  SMALL_RATIO_16_9: 1,
+  MEDIUM_RATIO_4_3: 2,
+  MEDIUM_RATIO_16_9: 3,
+  LARGE_RATIO_4_3: 4,
+  LARGE_RATIO_16_9: 5
+};
+var cameraResolutions_iOS = {
+  AVCaptureSessionPresetPhoto: 'AVCaptureSessionPresetPhoto',
+  AVCaptureSessionPresetHigh: 'AVCaptureSessionPresetHigh',
+  AVCaptureSessionPresetMedium: 'AVCaptureSessionPresetMedium',
+  AVCaptureSessionPresetLow: 'AVCaptureSessionPresetLow',
+  AVCaptureSessionPreset320x240: 'AVCaptureSessionPreset320x240',
+  AVCaptureSessionPreset352x288: 'AVCaptureSessionPreset352x288',
+  AVCaptureSessionPreset640x480: 'AVCaptureSessionPreset640x480',
+  AVCaptureSessionPreset960x540: 'AVCaptureSessionPreset960x540',
+  AVCaptureSessionPreset1280x720: 'AVCaptureSessionPreset1280x720',
+  AVCaptureSessionPreset1920x1080: 'AVCaptureSessionPreset1920x1080',
+  AVCaptureSessionPreset3840x2160: 'AVCaptureSessionPreset3840x2160',
+  AVCaptureSessionPresetiFrame960x540: 'AVCaptureSessionPresetiFrame960x540',
+  AVCaptureSessionPresetiFrame1280x720: 'AVCaptureSessionPresetiFrame1280x720'
+};
+var cameraResolutions = _objectSpread2({}, cameraResolutions_iOS, {}, cameraResolutions_android); // camera focusMode (仅 Android)
+
+var cameraFocusModes = {
+  auto: 0,
+  continuousPicture: 1,
+  continuousVideo: 2
+}; // camera videoOrientation (仅 iOS)
+
+var cameraVideoOrientations = {
+  portrait: 1,
+  portraitUpsideDown: 2,
+  landscapeRight: 3,
+  landscapeLeft: 4
+}; // microphone sampleRate 麦克风采样率 (仅 Android)
+
+var microphoneSampleRates = {
+  r44100: 44100,
+  r16000: 16000
+}; // microphone channel
+
+var microphoneChannels = {
+  mono: 0,
+  stereo: 1
+}; // video encodings
+
+var videoEncodings = {
+  e240: 0,
+  e480: 1,
+  e544: 2,
+  e720: 3,
+  e1088: 4
+}; // video encode orientation (仅 Android)
+
+var videoEncodeOrientations = {
+  portrait: 0,
+  landscape: 1
+}; // video H264 profile
+
+var videoH264Profiles_android = {
+  baseline: 0,
+  main: 1,
+  high: 2
+};
+var videoH264Profiles_iOS = {
+  baseline30: 'AVVideoProfileLevelH264Baseline30',
+  main30: 'AVVideoProfileLevelH264Main30',
+  baseline31: 'AVVideoProfileLevelH264Baseline31',
+  main32: 'AVVideoProfileLevelH264Main32',
+  high40: 'AVVideoProfileLevelH264High40',
+  baseline41: 'AVVideoProfileLevelH264Baseline41',
+  main41: 'AVVideoProfileLevelH264Main41',
+  high41: 'AVVideoProfileLevelH264High41',
+  baselineAutoLevel: 'AVVideoProfileLevelH264BaselineAutoLevel',
+  mainAutoLevel: 'AVVideoProfileLevelH264MainAutoLevel',
+  highAutoLevel: 'AVVideoProfileLevelH264HighAutoLevel'
+};
+var videoH264Profiles = _objectSpread2({}, videoH264Profiles_iOS, {}, videoH264Profiles_android); // bitrate adjust mode
+
+var bitrateAdjustModes = {
+  auto: 0,
+  manual: 1,
+  // 仅 Android
+  disable: 2
+}; // encoder rc mode
+
+var encoderRCModes = {
+  qualityPriority: 0,
+  bitratePriority: 1
+};
+
+var _const = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  streamingStates: streamingStates,
+  avCodecTypes_iOS: avCodecTypes_iOS,
+  avCodecTypes_android: avCodecTypes_android,
+  avCodecTypes: avCodecTypes,
+  cameraResolutions_android: cameraResolutions_android,
+  cameraResolutions_iOS: cameraResolutions_iOS,
+  cameraResolutions: cameraResolutions,
+  cameraFocusModes: cameraFocusModes,
+  cameraVideoOrientations: cameraVideoOrientations,
+  microphoneSampleRates: microphoneSampleRates,
+  microphoneChannels: microphoneChannels,
+  videoEncodings: videoEncodings,
+  videoEncodeOrientations: videoEncodeOrientations,
+  videoH264Profiles_android: videoH264Profiles_android,
+  videoH264Profiles_iOS: videoH264Profiles_iOS,
+  videoH264Profiles: videoH264Profiles,
+  bitrateAdjustModes: bitrateAdjustModes,
+  encoderRCModes: encoderRCModes
+});
+
 var PLRNMediaStreaming = reactNative.requireNativeComponent('PLRNMediaStreaming'); // const PLRNMediaStreaming = View
 
 var Streaming =
@@ -226,27 +343,125 @@ function (_Component) {
   return Streaming;
 }(React.Component);
 Streaming.propTypes = _objectSpread2({
-  rtmpURL: PropTypes.string.isRequired,
-  camera: PropTypes.oneOf(['front', 'back']),
-  muted: PropTypes.bool,
-  zoom: PropTypes.number,
-  focus: PropTypes.bool,
-  profile: PropTypes.shape({
-    video: PropTypes.shape({
-      fps: PropTypes.number.isRequired,
-      bps: PropTypes.number.isRequired,
-      maxFrameInterval: PropTypes.number.isRequired
+  rtmpURL: P.string.isRequired,
+  camera: P.oneOf(['front', 'back']),
+  muted: P.bool,
+  zoom: P.number,
+  focus: P.bool,
+  started: P.bool,
+  faceBeautyEnable: P.bool,
+  faceBeautySetting: P.shape({
+    beautyLevel: P.number,
+    // 0-1.0
+    whiten: P.number,
+    // 0-1.0
+    redden: P.number // 0-1.0
+
+  }),
+  watermarkSetting: P.shape({
+    // 水印设置
+    src: P.string,
+    // 文件路径
+    alpha: P.number,
+    // 0-255, iOS 不支持
+    position: P.shape({
+      x: P.number,
+      y: P.number
+    }),
+    size: P.shape({
+      // iOS 不支持
+      width: P.number,
+      height: P.number
+    })
+  }),
+  pictureStreamingFile: P.string,
+  // 图片推流文件，值为文件路径
+  pictureStreamingEnable: P.bool,
+  // 开始/关闭图片推流
+  torchEnable: P.bool,
+  // 开启、关闭闪光灯
+  captureFrame: P.bool,
+  // 截图
+  previewMirrorEnable: P.bool,
+  // 预览镜像设置
+  encodingMirrorEnable: P.bool,
+  // 编码镜像设置
+  audioMixFile: P.shape({
+    // 混音
+    filePath: P.string,
+    // 混音文件路径
+    loop: P.bool
+  }),
+  playMixAudio: P.bool,
+  // true 开始混音，false 暂停混音
+  audioMixVolume: P.shape({
+    micVolume: P.number,
+    // 0-1.0
+    musicVolume: P.number // 0-1.0
+
+  }),
+  playbackEnable: P.bool,
+  profile: P.shape({
+    videoStreamingSetting: P.shape({
+      fps: P.number.isRequired,
+      bps: P.number.isRequired,
+      maxFrameInterval: P.number.isRequired,
+      encodeOrientation: oneOf(videoEncodeOrientations),
+      // iOS 不支持
+      h264Profile: oneOf(videoH264Profiles),
+      customVideoEncodeSize: P.shape({
+        width: P.number,
+        // 单位：像素
+        height: P.number // 单位：像素
+
+      })
     }).isRequired,
-    audio: PropTypes.shape({
-      rate: PropTypes.number.isRequired,
-      bitrate: PropTypes.number.isRequired
+    audioStreamingSetting: P.shape({
+      rate: P.number.isRequired,
+      bitrate: P.number.isRequired
     }).isRequired,
-    encodingSize: PropTypes.oneOf([videoEncoding240, videoEncoding480, videoEncoding544, videoEncoding720, videoEncoding1088]).isRequired
+    encodingSize: oneOf(videoEncodings).isRequired,
+    avCodecType: oneOf(avCodecTypes),
+    cameraStreamingSetting: P.shape({
+      resolution: oneOf(cameraResolutions),
+      focusMode: oneOf(cameraFocusModes),
+      // iOS 不支持
+      videoOrientation: oneOf(cameraVideoOrientations) // Android 不支持
+
+    }),
+    microphoneSteamingSetting: P.shape({
+      sampleRate: oneOf(microphoneSampleRates),
+      // iOS 不支持
+      channel: oneOf(microphoneChannels),
+      isAecEnable: P.bool
+    }),
+    // screenSetting: P.shape({
+    //   width: P.number, // 单位：像素，全屏传 `0`，iOS 不支持
+    //   height: P.number, // 单位：像素，全屏传 `0`，iOS 不支持
+    //   dpi: P.number // 要求大于 0，iOS 不支持
+    // }),
+    quicEnable: P.bool,
+    bitrateAdjustMode: oneOf(bitrateAdjustModes),
+    adaptiveBitrateRange: P.shape({
+      minBitrate: P.number,
+      // 单位：bps
+      maxBitrate: P.number // 单位：bps，iOS 不支持
+
+    }),
+    encoderRCMode: oneOf(encoderRCModes),
+    // iOS 不支持
+    streamInfoUpdateInterval: P.number // 单位：秒
+
   }).isRequired,
-  started: PropTypes.bool,
-  onStateChange: PropTypes.func,
-  onStreamInfoChange: PropTypes.func
+  onStateChange: P.func,
+  onStreamInfoChange: P.func
 }, reactNative.View.propTypes);
+
+function oneOf(kvs) {
+  return P.oneOf(Object.keys(kvs).map(function (k) {
+    return kvs[k];
+  }));
+}
 
 exports.Streaming = Streaming;
 exports.consts = _const;
