@@ -3,7 +3,7 @@
  */
 
 import merge from 'merge'
-import React, { Component, useState } from 'react'
+import React, { Component } from 'react'
 import { SafeAreaView, Text, StatusBar, ScrollView, View, Button, Platform, PermissionsAndroid, TextInput } from 'react-native'
 import { consts, Streaming } from 'pili-streaming-react-native'
 import { FileInput, AvCodecTypeInput, CameraResolutionInput, CameraFocusModeInput, CameraVideoOrientationInput, MicrophoneSampleRateInput, MicrophoneChannelInput, SwitchInput, VideoEncodeOrientationInput, VideoH264ProfileInput, BitrateAdjustModeInput, EncoderRCModeInput, CameraInput } from './components/Input'
@@ -226,10 +226,11 @@ export default class App extends Component {
 
             <TextInput
               multiline
-              numberOfLines={5}
+              numberOfLines={4}
               value={streamingConfigInput}
               onChangeText={this.handleStreamingConfigInputChange}
               placeholder={'请输入 JSON 格式的配置，如 { "camera": "front" }'}
+              style={{ backgroundColor: '#f0f0f0', lineHeight: 30, height: 120 }}
             />
             {streamingConfigErrorText}
             <Button title="提交" onPress={this.handleStreamingConfigInputSubmit} />

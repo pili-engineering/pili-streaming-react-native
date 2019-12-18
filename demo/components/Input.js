@@ -105,6 +105,11 @@ export function FileInput({ label, onChange }) {
   const [result, setResult] = useState('')
 
   const handleDownload = () => {
+    setResult('')
+    if (!fromUrl) {
+      onChange(null)
+      return
+    }
     const fileName = fromUrl.split('/').pop()
     const toFile = DocumentDirectoryPath + '/' + fileName
     downloadFile({ fromUrl, toFile }).promise.then(
@@ -122,7 +127,7 @@ export function FileInput({ label, onChange }) {
         placeholder={'请输入' + label + '的 URL'}
         value={fromUrl}
         onChangeText={setFromUrl}
-        style={{ backgroundColor: '#f0f0f0' }}
+        style={{ backgroundColor: '#f0f0f0', height: 40 }}
       />
       {result ? <Text>{result}</Text> : null}
       <Button title={'加载' + label} onPress={handleDownload} />
@@ -133,7 +138,7 @@ export function FileInput({ label, onChange }) {
 export function SwitchInput({ label, value, onChange }) {
   return (
     <View style={{ marginTop: 10, flexDirection: 'row' }}>
-      <Text style={{ flex: 1 }}>{label}</Text>
+      <Text style={{ flex: 1, lineHeight: 30 }}>{label}</Text>
       <Switch value={value} onValueChange={onChange} />
     </View>
   )
