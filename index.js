@@ -189,19 +189,17 @@ var cameraResolutions_android = {
   LARGE_RATIO_16_9: 5
 };
 var cameraResolutions_iOS = {
-  AVCaptureSessionPresetPhoto: 'AVCaptureSessionPresetPhoto',
-  AVCaptureSessionPresetHigh: 'AVCaptureSessionPresetHigh',
-  AVCaptureSessionPresetMedium: 'AVCaptureSessionPresetMedium',
-  AVCaptureSessionPresetLow: 'AVCaptureSessionPresetLow',
-  AVCaptureSessionPreset320x240: 'AVCaptureSessionPreset320x240',
-  AVCaptureSessionPreset352x288: 'AVCaptureSessionPreset352x288',
-  AVCaptureSessionPreset640x480: 'AVCaptureSessionPreset640x480',
-  AVCaptureSessionPreset960x540: 'AVCaptureSessionPreset960x540',
-  AVCaptureSessionPreset1280x720: 'AVCaptureSessionPreset1280x720',
-  AVCaptureSessionPreset1920x1080: 'AVCaptureSessionPreset1920x1080',
-  AVCaptureSessionPreset3840x2160: 'AVCaptureSessionPreset3840x2160',
-  AVCaptureSessionPresetiFrame960x540: 'AVCaptureSessionPresetiFrame960x540',
-  AVCaptureSessionPresetiFrame1280x720: 'AVCaptureSessionPresetiFrame1280x720'
+  AVCaptureSessionPresetPhoto: 0,
+  AVCaptureSessionPresetHigh: 1,
+  AVCaptureSessionPresetMedium: 2,
+  AVCaptureSessionPresetLow: 3,
+  AVCaptureSessionPreset352x288: 4,
+  AVCaptureSessionPreset640x480: 5,
+  AVCaptureSessionPreset1280x720: 6,
+  AVCaptureSessionPreset1920x1080: 7,
+  AVCaptureSessionPreset3840x2160: 8,
+  AVCaptureSessionPresetiFrame960x540: 9,
+  AVCaptureSessionPresetiFrame1280x720: 10
 };
 var cameraResolutions = _objectSpread2({}, cameraResolutions_iOS, {}, cameraResolutions_android); // camera focusMode (仅 Android)
 
@@ -247,17 +245,18 @@ var videoH264Profiles_android = {
   high: 2
 };
 var videoH264Profiles_iOS = {
-  baseline30: 'AVVideoProfileLevelH264Baseline30',
-  main30: 'AVVideoProfileLevelH264Main30',
-  baseline31: 'AVVideoProfileLevelH264Baseline31',
-  main32: 'AVVideoProfileLevelH264Main32',
-  high40: 'AVVideoProfileLevelH264High40',
-  baseline41: 'AVVideoProfileLevelH264Baseline41',
-  main41: 'AVVideoProfileLevelH264Main41',
-  high41: 'AVVideoProfileLevelH264High41',
-  baselineAutoLevel: 'AVVideoProfileLevelH264BaselineAutoLevel',
-  mainAutoLevel: 'AVVideoProfileLevelH264MainAutoLevel',
-  highAutoLevel: 'AVVideoProfileLevelH264HighAutoLevel'
+  baseline30: 0,
+  main30: 1,
+  baseline31: 2,
+  main31: 3,
+  main32: 4,
+  high40: 5,
+  baseline41: 6,
+  main41: 7,
+  high41: 8,
+  baselineAutoLevel: 9,
+  mainAutoLevel: 10,
+  highAutoLevel: 11
 };
 var videoH264Profiles = _objectSpread2({}, videoH264Profiles_iOS, {}, videoH264Profiles_android); // bitrate adjust mode
 

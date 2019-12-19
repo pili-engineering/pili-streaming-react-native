@@ -70,11 +70,11 @@ export default class App extends Component {
           h264Profile: (
             isAndroid
             ? consts.videoH264Profiles_android.baseline
-            : consts.videoH264Profiles_iOS.baselineAutoLevel
+            : consts.videoH264Profiles_iOS.baseline31
           ),
           customVideoEncodeSize: {
-            width: 800,
-            height: 1024
+            width: 1024,
+            height: 720
           }
         },
         audioStreamingSetting: {
@@ -94,7 +94,7 @@ export default class App extends Component {
             : consts.cameraResolutions_iOS.AVCaptureSessionPresetMedium
           ),
           focusMode: consts.cameraFocusModes.auto,
-          videoOrientation: consts.cameraVideoOrientations.landscapeLeft
+          videoOrientation: consts.cameraVideoOrientations.portrait
         },
         microphoneSteamingSetting: {
           sampleRate: consts.microphoneSampleRates.r16000,
