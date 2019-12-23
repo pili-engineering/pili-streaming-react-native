@@ -143,3 +143,14 @@ export function SwitchInput({ label, value, onChange }) {
     </View>
   )
 }
+
+export function NumberInput({ label, value, onChange }) {
+  const [valueText, setValueText] = useState(value + '')
+  return (
+    <View style={{ marginTop: 10 }}>
+      <Text style={{ lineHeight: 40 }}>{label}</Text>
+      <TextInput style={{ flex: 1, backgroundColor: '#f0f0f0', height: 40 }} value={valueText} onChangeText={setValueText} />
+      <Button title="提交" onPress={() => onChange(parseFloat(valueText))} />
+    </View>
+  )
+}
