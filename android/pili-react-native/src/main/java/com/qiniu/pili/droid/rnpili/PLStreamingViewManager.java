@@ -1,5 +1,6 @@
 package com.qiniu.pili.droid.rnpili;
 
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.util.Log;
@@ -16,12 +17,7 @@ import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
-import com.qiniu.android.dns.DnsManager;
-import com.qiniu.android.dns.IResolver;
-import com.qiniu.android.dns.NetworkInfo;
-import com.qiniu.android.dns.http.DnspodFree;
-import com.qiniu.android.dns.local.AndroidDnsServer;
-import com.qiniu.android.dns.local.Resolver;
+import com.qiniu.pili.droid.rnpili.utils.Utils;
 import com.qiniu.pili.droid.streaming.AVCodecType;
 import com.qiniu.pili.droid.streaming.CameraStreamingSetting;
 import com.qiniu.pili.droid.streaming.MediaStreamingManager;
@@ -32,9 +28,11 @@ import com.qiniu.pili.droid.streaming.StreamingProfile;
 import com.qiniu.pili.droid.streaming.StreamingSessionListener;
 import com.qiniu.pili.droid.streaming.StreamingState;
 import com.qiniu.pili.droid.streaming.StreamingStateChangedListener;
+import com.qiniu.pili.droid.streaming.WatermarkSetting;
+import com.qiniu.pili.droid.streaming.microphone.AudioMixer;
+import com.qiniu.pili.droid.streaming.microphone.OnAudioMixListener;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -42,12 +40,9 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrameView>  implements
-        CameraPreviewFrameView.Listener,
-        StreamingSessionListener,
-        StreamingStateChangedListener,
-        StreamStatusCallback,
-        LifecycleEventListener {
+public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrameView>
+        implements CameraPreviewFrameView.Listener, StreamingSessionListener, StreamingStateChangedListener,
+        StreamStatusCallback, LifecycleEventListener {
     private static final String TAG = "PLStreamingViewManager";
     private static final String EXPORT_COMPONENT_NAME = "PLRNMediaStreaming";
 
@@ -59,23 +54,37 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
     private MediaStreamingManager mMediaStreamingManager;
     private CameraPreviewFrameView mCameraPreviewFrameView;
     private StreamingProfile mProfile;
-    private CameraStreamingSetting mCameraStreamingSetting;
+    private AudioMixer mAudioMixer;
+    private CameraStreamingSetting mCameraStreamingSetting = null;
+    private WatermarkSetting mWatermarkSetting;
+    private CameraStreamingSetting.FaceBeautySetting mFaceBeautySetting;
 
     private boolean mIsFocus = false;
-    private boolean mIsStarted = true;//default start attach on parent view
+    private boolean mIsStarted = true;// default start attach on parent view
     private boolean mIsReady;
 
     private int mCurrentZoom = 0;
     private int mMaxZoom = 0;
+    private CameraStreamingSetting.CAMERA_FACING_ID mCameraId = CameraStreamingSetting.CAMERA_FACING_ID.CAMERA_FACING_FRONT;
+
+    private String mPublishUrl;
+    private String mPictureStreamingFile = null;
+    private boolean mIsPictureStreamingEnabled;
+
+    private String mAudioMixFile;
+    private boolean mIsAudioMixLooping;
+    private boolean mIsMixAudioPlaying;
+
+    private boolean mIsPlaybackEnable;
+    private boolean mIsPreviewMirror;
+    private boolean mIsEncodeMirror;
+    private boolean mIsTorchEnable;
+    private boolean mIsMuted;
+
+    private CameraStreamingSetting.VIDEO_FILTER_TYPE mCurrentVideoFilterType = CameraStreamingSetting.VIDEO_FILTER_TYPE.VIDEO_FILTER_BEAUTY;
 
     public enum Events {
-        READY,
-        CONNECTING,
-        STREAMING,
-        SHUTDOWN,
-        IOERROR,
-        DISCONNECTED,
-        STREAM_INFO_CHANGE;
+        READY, CONNECTING, STREAMING, SHUTDOWN, IOERROR, DISCONNECTED, AUDIO_MIX_FINISHED, STREAM_INFO_CHANGE,
     }
 
     @NonNull
@@ -87,6 +96,7 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
     @NonNull
     @Override
     protected CameraPreviewFrameView createViewInstance(@NonNull ThemedReactContext reactContext) {
+        Log.i(TAG, "createViewInstance");
         StreamingEnv.init(reactContext);
 
         mReactContext = reactContext;
@@ -94,10 +104,17 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
 
         mCameraPreviewFrameView = new CameraPreviewFrameView(mReactContext);
         mCameraPreviewFrameView.setListener(this);
-        mCameraPreviewFrameView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        initStreamingManager(mCameraPreviewFrameView);
+        mCameraPreviewFrameView.setLayoutParams(
+                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mReactContext.addLifecycleEventListener(this);
         return mCameraPreviewFrameView;
+    }
+
+    @Override
+    public void onDropViewInstance(CameraPreviewFrameView view) {
+        Log.i(TAG, "onDropViewInstance");
+        super.onDropViewInstance(view);
+        mReactContext.removeLifecycleEventListener(this);
     }
 
     @Nullable
@@ -105,54 +122,136 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
     public Map getExportedCustomBubblingEventTypeConstants() {
         return MapBuilder.builder()
                 .put(Events.READY.toString(),
-                        MapBuilder.of(
-                                "phasedRegistrationNames",
-                                MapBuilder.of("bubbled", "onStateChange")))
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
                 .put(Events.CONNECTING.toString(),
-                        MapBuilder.of(
-                                "phasedRegistrationNames",
-                                MapBuilder.of("bubbled", "onStateChange")))
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
                 .put(Events.STREAMING.toString(),
-                        MapBuilder.of(
-                                "phasedRegistrationNames",
-                                MapBuilder.of("bubbled", "onStateChange")))
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
                 .put(Events.SHUTDOWN.toString(),
-                        MapBuilder.of(
-                                "phasedRegistrationNames",
-                                MapBuilder.of("bubbled", "onStateChange")))
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
                 .put(Events.IOERROR.toString(),
-                        MapBuilder.of(
-                                "phasedRegistrationNames",
-                                MapBuilder.of("bubbled", "onStateChange")))
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
                 .put(Events.DISCONNECTED.toString(),
-                        MapBuilder.of(
-                                "phasedRegistrationNames",
-                                MapBuilder.of("bubbled", "onStateChange")))
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
+                .put(Events.AUDIO_MIX_FINISHED.toString(),
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
                 .put(Events.STREAM_INFO_CHANGE.toString(),
-                        MapBuilder.of(
-                                "phasedRegistrationNames",
-                                MapBuilder.of("bubbled", "onStreamInfoChange")))
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStreamInfoChange")))
                 .build();
     }
 
     @ReactProp(name = "profile")
     public void setStreamingProfile(CameraPreviewFrameView view, @Nullable ReadableMap profile) {
-        ReadableMap video = profile.getMap("video");
-        ReadableMap audio = profile.getMap("audio");
-        int encodingSize = profile.getInt("encodingSize");
+        Log.i(TAG, "setStreamingProfile");
+        if (mProfile != null) {
+            return;
+        }
+        ReadableMap cameraSetting = profile.getMap("cameraStreamingSetting");
+        int previewSize = cameraSetting.getInt("resolution");
+        int focusMode = cameraSetting.getInt("focusMode");
 
-        StreamingProfile.AudioProfile aProfile =
-                new StreamingProfile.AudioProfile(audio.getInt("rate"), audio.getInt("bitrate")); //audio sample rate, audio bitrate
-        StreamingProfile.VideoProfile vProfile =
-                new StreamingProfile.VideoProfile(video.getInt("fps"), video.getInt("bps"), video.getInt("maxFrameInterval"));//fps bps maxFrameInterval
+        ReadableMap microphoneSetting = profile.getMap("microphoneSteamingSetting");
+        int sampleRate = microphoneSetting.getInt("sampleRate");
+        int channel = microphoneSetting.getInt("channel");
+        boolean isAecEnable = microphoneSetting.getBoolean("isAecEnable");
+
+        ReadableMap video = profile.getMap("videoStreamingSetting");
+        ReadableMap audio = profile.getMap("audioStreamingSetting");
+        int encodingSize = profile.getInt("encodingSize");
+        int encoderRCMode = profile.getInt("encoderRCMode");
+        int streamStatusConfig = profile.getInt("streamInfoUpdateInterval");
+        int encodeOrientation = video.getInt("encodeOrientation");
+        int h264Profile = video.getInt("h264Profile");
+
+        boolean isQuicEnable = profile.getBoolean("quicEnable");
+        AVCodecType avCodecType = getAvCodecType(profile.getInt("avCodecType"));
+        Point customVideoEncodeSize = null;
+        if (video.hasKey("customVideoEncodeSize")) {
+            customVideoEncodeSize = new Point(video.getMap("customVideoEncodeSize").getInt("width")
+                    , video.getMap("customVideoEncodeSize").getInt("height"));
+        }
+
+        StreamingProfile.AudioProfile aProfile = new StreamingProfile.AudioProfile(audio.getInt("rate"),
+                audio.getInt("bitrate")); // audio sample rate, audio bitrate
+        StreamingProfile.VideoProfile vProfile = new StreamingProfile.VideoProfile(video.getInt("fps"),
+                video.getInt("bps"), video.getInt("maxFrameInterval"), getH264Profile(h264Profile));// fps bps
+        // maxFrameInterval
         StreamingProfile.AVProfile avProfile = new StreamingProfile.AVProfile(vProfile, aProfile);
-        mProfile.setAVProfile(avProfile);
-        mProfile.setEncodingSizeLevel(encodingSize);
-        mMediaStreamingManager.setStreamingProfile(mProfile);
+
+        mProfile = new StreamingProfile();
+        mProfile.setEncodingSizeLevel(encodingSize).setAVProfile(avProfile)
+                .setQuicEnable(isQuicEnable)
+                .setEncoderRCMode(encoderRCMode == 0 ? StreamingProfile.EncoderRCModes.QUALITY_PRIORITY
+                        : StreamingProfile.EncoderRCModes.BITRATE_PRIORITY)
+                .setDnsManager(Utils.getMyDnsManager())
+                .setStreamStatusConfig(new StreamingProfile.StreamStatusConfig(streamStatusConfig))
+                .setEncodingOrientation(encodeOrientation == 0 ? StreamingProfile.ENCODING_ORIENTATION.PORT
+                        : StreamingProfile.ENCODING_ORIENTATION.LAND)
+                .setSendingBufferProfile(new StreamingProfile.SendingBufferProfile(0.2f, 0.8f, 3.0f, 20 * 1000));
+        if (mPublishUrl != null) {
+            try {
+                mProfile.setPublishUrl(mPublishUrl);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+        if (mPictureStreamingFile != null) {
+            mProfile.setPictureStreamingFilePath(mPictureStreamingFile);
+            mPictureStreamingFile = null;
+        }
+        if (customVideoEncodeSize != null && customVideoEncodeSize.x != 0 && customVideoEncodeSize.y != 0) {
+            mProfile.setPreferredVideoEncodingSize(customVideoEncodeSize.x, customVideoEncodeSize.y);
+        }
+
+        if (!isAudioStreamingOnly(avCodecType)) {
+            mCameraStreamingSetting = new CameraStreamingSetting();
+            mCameraStreamingSetting.setCameraId(mCameraId.ordinal())
+                    .setContinuousFocusModeEnabled(true)
+                    .setRecordingHint(false)
+                    .setResetTouchFocusDelayInMs(3000)
+                    .setBuiltInFaceBeautyEnabled(true)
+                    .setVideoFilter(mCurrentVideoFilterType)
+                    .setFocusMode(focusMode == 0 ? CameraStreamingSetting.FOCUS_MODE_AUTO
+                            : (focusMode == 1 ? CameraStreamingSetting.FOCUS_MODE_CONTINUOUS_PICTURE
+                            : CameraStreamingSetting.FOCUS_MODE_CONTINUOUS_VIDEO))
+                    .setCameraPrvSizeLevel(previewSize <= 1 ? CameraStreamingSetting.PREVIEW_SIZE_LEVEL.SMALL
+                            : (previewSize <= 3 ? CameraStreamingSetting.PREVIEW_SIZE_LEVEL.MEDIUM
+                            : CameraStreamingSetting.PREVIEW_SIZE_LEVEL.LARGE))
+                    .setCameraPrvSizeRatio((previewSize == 0 || previewSize == 2 || previewSize == 4)
+                            ? CameraStreamingSetting.PREVIEW_SIZE_RATIO.RATIO_4_3
+                            : CameraStreamingSetting.PREVIEW_SIZE_RATIO.RATIO_16_9);
+            if (mFaceBeautySetting != null) {
+                mCameraStreamingSetting.setFaceBeautySetting(mFaceBeautySetting);
+            }
+        }
+
+        MicrophoneStreamingSetting microphoneStreamingSetting = new MicrophoneStreamingSetting();
+        microphoneStreamingSetting.setSampleRate(sampleRate)
+                .setAECEnabled(isAecEnable);
+        if (channel == 1) {
+            microphoneStreamingSetting.setChannelConfig(AudioFormat.CHANNEL_IN_STEREO);
+        }
+
+        Log.i(TAG, "new manager +");
+        mMediaStreamingManager = new MediaStreamingManager(mReactContext, mCameraPreviewFrameView,
+                AVCodecType.SW_VIDEO_WITH_SW_AUDIO_CODEC);
+        Log.i(TAG, "new manager -");
+        mMediaStreamingManager.prepare(mCameraStreamingSetting, microphoneStreamingSetting, mWatermarkSetting,
+                mProfile);
+        mMediaStreamingManager.setAutoRefreshOverlay(true);
+
+        mMediaStreamingManager.setStreamingSessionListener(this);
+        mMediaStreamingManager.setStreamingStateListener(this);
+        mMediaStreamingManager.setStreamStatusCallback(this);
     }
 
     @ReactProp(name = "rtmpURL")
     public void setPublishUrl(CameraPreviewFrameView view, String url) {
+        Log.i(TAG, "setPublishUrl : " + url);
+        if (mProfile == null || mMediaStreamingManager == null) {
+            mPublishUrl = url;
+            return;
+        }
         try {
             mProfile.setPublishUrl(url);
             mMediaStreamingManager.setStreamingProfile(mProfile);
@@ -163,51 +262,221 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
 
     @ReactProp(name = "camera")
     public void setCameraId(CameraPreviewFrameView view, String cameraId) {
-        CameraStreamingSetting.CAMERA_FACING_ID facingId;
+        Log.i(TAG, "setCameraId : " + cameraId);
         if ("front".equals(cameraId)) {
-            facingId = CameraStreamingSetting.CAMERA_FACING_ID.CAMERA_FACING_FRONT;
+            mCameraId = CameraStreamingSetting.CAMERA_FACING_ID.CAMERA_FACING_FRONT;
         } else if ("back".equals(cameraId)) {
-            facingId = CameraStreamingSetting.CAMERA_FACING_ID.CAMERA_FACING_BACK;
+            mCameraId = CameraStreamingSetting.CAMERA_FACING_ID.CAMERA_FACING_BACK;
         } else {
-            facingId = CameraStreamingSetting.CAMERA_FACING_ID.CAMERA_FACING_3RD;
+            mCameraId = CameraStreamingSetting.CAMERA_FACING_ID.CAMERA_FACING_3RD;
         }
-        mMediaStreamingManager.switchCamera(facingId);
+        if (mMediaStreamingManager != null) {
+            mMediaStreamingManager.switchCamera(mCameraId);
+        }
     }
 
     @ReactProp(name = "muted", defaultBoolean = false)
     public void setMuted(CameraPreviewFrameView view, boolean muted) {
-        mMediaStreamingManager.mute(muted);
+        Log.i(TAG, "setMuted : " + muted);
+        mIsMuted = muted;
+        if (mMediaStreamingManager != null) {
+            mMediaStreamingManager.mute(muted);
+        }
+
     }
 
     @ReactProp(name = "zoom")
     public void setZoom(CameraPreviewFrameView view, int zoom) {
+        Log.i(TAG, "setZoom : " + zoom);
         mCurrentZoom = Math.min(zoom, mMaxZoom);
         mCurrentZoom = Math.max(0, mCurrentZoom);
-        mMediaStreamingManager.setZoomValue(mCurrentZoom);
+        if (mMediaStreamingManager != null) {
+            mMediaStreamingManager.setZoomValue(mCurrentZoom);
+        }
     }
 
     @ReactProp(name = "focus")
     public void setFocus(CameraPreviewFrameView view, boolean focus) {
+        Log.i(TAG, "setFocus : " + focus);
         mIsFocus = focus;
     }
 
     @ReactProp(name = "started", defaultBoolean = false)
     public void setStarted(CameraPreviewFrameView view, boolean started) {
-        if (mIsStarted == started) {
+        Log.i(TAG, "setStarted : " + started);
+        mIsStarted = started;
+        if (mMediaStreamingManager == null) {
             return;
         }
-        mIsStarted = started;
-        if (mIsReady) {
-            if (mIsStarted) {
-                startStreaming();
+        if (mIsStarted) {
+            startStreaming();
+        } else {
+            mMediaStreamingManager.stopStreaming();
+        }
+    }
+
+    @ReactProp(name = "faceBeautyEnable", defaultBoolean = false)
+    public void setFaceBeautyOn(CameraPreviewFrameView view, boolean faceBeautyEnable) {
+        Log.i(TAG, "setFaceBeautyOn : " + faceBeautyEnable);
+        mCurrentVideoFilterType = faceBeautyEnable ? CameraStreamingSetting.VIDEO_FILTER_TYPE.VIDEO_FILTER_BEAUTY
+                : CameraStreamingSetting.VIDEO_FILTER_TYPE.VIDEO_FILTER_NONE;
+        if (mMediaStreamingManager != null) {
+            mMediaStreamingManager.setVideoFilterType(mCurrentVideoFilterType);
+        }
+    }
+
+    @ReactProp(name = "faceBeautySetting")
+    public void updateFaceBeautySetting(CameraPreviewFrameView view, ReadableMap faceBeautySetting) {
+        Log.i(TAG, "updateFaceBeautySetting");
+        if (mFaceBeautySetting == null) {
+            mFaceBeautySetting = new CameraStreamingSetting.FaceBeautySetting(1.0f, 1.0f, 0.8f);
+        }
+        mFaceBeautySetting.beautyLevel = (float) faceBeautySetting.getDouble("beautyLevel");
+        mFaceBeautySetting.whiten = (float) faceBeautySetting.getDouble("whiten");
+        mFaceBeautySetting.redden = (float) faceBeautySetting.getDouble("redden");
+        if (mMediaStreamingManager != null) {
+            mMediaStreamingManager.updateFaceBeautySetting(mFaceBeautySetting);
+        }
+    }
+
+    /**
+     * 添加水印
+     *
+     * @param view             视图实例
+     * @param watermarkSetting 水印配置
+     */
+    @ReactProp(name = "watermarkSetting")
+    public void updateWatermarkSetting(CameraPreviewFrameView view, ReadableMap watermarkSetting) {
+        Log.i(TAG, "updateWatermarkSetting");
+        String filePath = watermarkSetting.getString("src");
+        int alpha = watermarkSetting.getInt("alpha");
+        ReadableMap customPos = watermarkSetting.getMap("position");
+        ReadableMap customSize = watermarkSetting.getMap("size");
+        if (filePath == null) {
+            mWatermarkSetting = null;
+        } else {
+            if (mWatermarkSetting == null) {
+                mWatermarkSetting = new WatermarkSetting(mReactContext);
+            }
+            mWatermarkSetting.setResourcePath(filePath).setAlpha(alpha)
+                    .setCustomPosition((float) customPos.getDouble("x"), (float) customPos.getDouble("y"))
+                    .setCustomSize(customSize.getInt("width"), customSize.getInt("height"));
+        }
+        // TODO : Android 支持配置 bitmap、res drawable、file path
+        if (mMediaStreamingManager != null) {
+            mMediaStreamingManager.updateWatermarkSetting(mWatermarkSetting);
+        }
+    }
+
+    @ReactProp(name = "pictureStreamingFile")
+    public void setPictureStreamingFile(CameraPreviewFrameView view, String pictureStreamingFile) {
+        Log.i(TAG, "setPictureStreamingFile : " + pictureStreamingFile);
+        mPictureStreamingFile = pictureStreamingFile;
+        if (mMediaStreamingManager != null) {
+            mMediaStreamingManager.setPictureStreamingFilePath(pictureStreamingFile);
+            mPictureStreamingFile = null;
+        }
+    }
+
+    @ReactProp(name = "pictureStreamingEnable")
+    public void togglePictureStreaming(CameraPreviewFrameView view, boolean pictureStreamingEnable) {
+        Log.i(TAG, "togglePictureStreaming : " + pictureStreamingEnable);
+        // TODO : StreamingProfile 中设置图片路径
+        mIsPictureStreamingEnabled = pictureStreamingEnable;
+        if (mMediaStreamingManager == null) {
+            return;
+        }
+        if ((pictureStreamingEnable && !mMediaStreamingManager.isPictureStreaming())
+                || (!pictureStreamingEnable && mMediaStreamingManager.isPictureStreaming())) {
+            mMediaStreamingManager.togglePictureStreaming();
+        }
+    }
+
+    @ReactProp(name = "torchEnable")
+    public void enableTorch(CameraPreviewFrameView view, boolean torchEnable) {
+        Log.i(TAG, "enableTorch : " + torchEnable);
+        mIsTorchEnable = torchEnable;
+        if (mMediaStreamingManager == null) {
+            return;
+        }
+        if (torchEnable) {
+            mMediaStreamingManager.turnLightOn();
+        } else {
+            mMediaStreamingManager.turnLightOff();
+        }
+    }
+
+    @ReactProp(name = "previewMirrorEnable")
+    public void setPreviewMirror(CameraPreviewFrameView view, boolean previewMirrorEnable) {
+        Log.i(TAG, "setPreviewMirror : " + previewMirrorEnable);
+        mIsPreviewMirror = previewMirrorEnable;
+        if (mMediaStreamingManager != null) {
+            mMediaStreamingManager.setPreviewMirror(previewMirrorEnable);
+        }
+    }
+
+    @ReactProp(name = "encodingMirrorEnable")
+    public void setEncodingMirror(CameraPreviewFrameView view, boolean encodingMirrorEnable) {
+        Log.i(TAG, "setEncodingMirror : " + encodingMirrorEnable);
+        mIsEncodeMirror = encodingMirrorEnable;
+        if (mMediaStreamingManager != null) {
+            mMediaStreamingManager.setEncodingMirror(encodingMirrorEnable);
+        }
+    }
+
+    @ReactProp(name = "playbackEnable")
+    public void togglePlayback(CameraPreviewFrameView view, boolean playbackEnable) {
+        Log.i(TAG, "togglePlayback : " + playbackEnable);
+        mIsPlaybackEnable = playbackEnable;
+        if (mMediaStreamingManager == null) {
+            return;
+        }
+        if (mIsPlaybackEnable) {
+            boolean ret = mMediaStreamingManager.startPlayback();
+            Log.i(TAG, "playback ret = " + ret);
+        } else {
+            mMediaStreamingManager.stopPlayback();
+        }
+    }
+
+    @ReactProp(name = "audioMixFile")
+    public void setAudioMixFile(CameraPreviewFrameView view, ReadableMap audioMixFile) {
+        Log.i(TAG, "file = " + audioMixFile.getString("filePath") + " loop = " + audioMixFile.getBoolean("loop"));
+        mAudioMixFile = audioMixFile.getString("filePath");
+        mIsAudioMixLooping = audioMixFile.getBoolean("loop");
+        if (mMediaStreamingManager == null) {
+            return;
+        }
+        if (mAudioMixer == null) {
+            initAudioMixer();
+        }
+        try {
+            if (mAudioMixFile == null) {
+                mAudioMixer.stop();
             } else {
-                mMediaStreamingManager.stopStreaming();
+                mAudioMixer.setFile(mAudioMixFile, mIsAudioMixLooping);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @ReactProp(name = "playMixAudio")
+    public void playMixAudio(CameraPreviewFrameView view, boolean playMixAudio) {
+        Log.i(TAG, "playMixAudio : " + playMixAudio);
+        mIsMixAudioPlaying = playMixAudio;
+        if (mAudioMixer != null) {
+            if (playMixAudio && !mAudioMixer.isRunning()) {
+                mAudioMixer.play();
+            } else if (!playMixAudio && mAudioMixer.isRunning()) {
+                mAudioMixer.pause();
             }
         }
     }
 
     @Override
     public void onHostResume() {
+        Log.i(TAG, "onHostResume");
         if (mMediaStreamingManager != null) {
             mMediaStreamingManager.resume();
         }
@@ -215,13 +484,16 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
 
     @Override
     public void onHostPause() {
+        Log.i(TAG, "onHostPause");
         mMediaStreamingManager.pause();
     }
 
     @Override
     public void onHostDestroy() {
+        Log.i(TAG, "onHostDestroy");
         mMediaStreamingManager.destroy();
         mMediaStreamingManager = null;
+        mProfile = null;
     }
 
     @Override
@@ -274,18 +546,45 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
 
     @Override
     public void onStateChanged(StreamingState streamingState, Object extra) {
+        Log.i(TAG, "onStateChanged : " + streamingState.name());
         WritableMap event = Arguments.createMap();
         switch (streamingState) {
             case PREPARING:
                 break;
             case READY:
                 mIsReady = true;
+                event.putInt(STATE, Events.READY.ordinal());
+                mEventEmitter.receiveEvent(getTargetId(), Events.READY.toString(), event);
                 mMaxZoom = mMediaStreamingManager.getMaxZoom();
+                if (mMediaStreamingManager.getZoom() != mCurrentZoom) {
+                    mMediaStreamingManager.setZoomValue(mCurrentZoom);
+                }
+                if (mAudioMixFile != null && mAudioMixer == null) {
+                    initAudioMixer();
+                    try {
+                        mAudioMixer.setFile(mAudioMixFile, mIsAudioMixLooping);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (mIsMixAudioPlaying && mAudioMixer != null) {
+                    mAudioMixer.play();
+                }
+                if (mIsPlaybackEnable) {
+                    mMediaStreamingManager.startPlayback();
+                }
                 if (mIsStarted) {
                     startStreaming();
                 }
-                event.putInt(STATE, Events.READY.ordinal());
-                mEventEmitter.receiveEvent(getTargetId(), Events.READY.toString(), event);
+                if (mIsPictureStreamingEnabled && !mMediaStreamingManager.isPictureStreaming()) {
+                    mMediaStreamingManager.togglePictureStreaming();
+                }
+                mMediaStreamingManager.setPreviewMirror(mIsPreviewMirror);
+                mMediaStreamingManager.setEncodingMirror(mIsEncodeMirror);
+                mMediaStreamingManager.mute(mIsMuted);
+                if (mIsTorchEnable) {
+                    mMediaStreamingManager.turnLightOn();
+                }
                 break;
             case CONNECTING:
                 event.putInt(STATE, Events.CONNECTING.ordinal());
@@ -314,45 +613,6 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
         return mCameraPreviewFrameView.getId();
     }
 
-    private void initStreamingManager(CameraPreviewFrameView cameraPreviewFrameView) {
-        if (mMediaStreamingManager == null) {
-            mMediaStreamingManager = new MediaStreamingManager(mReactContext, cameraPreviewFrameView, AVCodecType.SW_VIDEO_WITH_SW_AUDIO_CODEC);
-
-            mProfile = new StreamingProfile();
-            StreamingProfile.AudioProfile aProfile = new StreamingProfile.AudioProfile(44100, 96 * 1024); //audio sample rate, audio bitrate
-            StreamingProfile.VideoProfile vProfile = new StreamingProfile.VideoProfile(30, 1000 * 1024, 48);//fps bps maxFrameInterval
-            StreamingProfile.AVProfile avProfile = new StreamingProfile.AVProfile(vProfile, aProfile);
-            mProfile.setVideoQuality(StreamingProfile.VIDEO_QUALITY_HIGH3)
-                    .setAudioQuality(StreamingProfile.AUDIO_QUALITY_MEDIUM2)
-                    .setEncodingSizeLevel(StreamingProfile.VIDEO_ENCODING_HEIGHT_480)
-                    .setEncoderRCMode(StreamingProfile.EncoderRCModes.QUALITY_PRIORITY)
-                    .setAVProfile(avProfile)
-                    .setDnsManager(getMyDnsManager())
-                    .setStreamStatusConfig(new StreamingProfile.StreamStatusConfig(3))
-                    .setEncodingOrientation(StreamingProfile.ENCODING_ORIENTATION.PORT)
-                    .setSendingBufferProfile(new StreamingProfile.SendingBufferProfile(0.2f, 0.8f, 3.0f, 20 * 1000));
-
-            mCameraStreamingSetting = new CameraStreamingSetting();
-            mCameraStreamingSetting.setCameraId(Camera.CameraInfo.CAMERA_FACING_BACK)
-                    .setContinuousFocusModeEnabled(true)
-                    .setRecordingHint(false)
-                    .setResetTouchFocusDelayInMs(3000)
-                    .setFocusMode(CameraStreamingSetting.FOCUS_MODE_CONTINUOUS_VIDEO)
-                    .setCameraPrvSizeLevel(CameraStreamingSetting.PREVIEW_SIZE_LEVEL.MEDIUM)
-                    .setCameraPrvSizeRatio(CameraStreamingSetting.PREVIEW_SIZE_RATIO.RATIO_16_9);
-
-            MicrophoneStreamingSetting microphoneStreamingSetting = new MicrophoneStreamingSetting();
-            microphoneStreamingSetting.setChannelConfig(AudioFormat.CHANNEL_IN_STEREO);
-
-            mMediaStreamingManager.prepare(mCameraStreamingSetting, microphoneStreamingSetting, mProfile);
-            mMediaStreamingManager.setAutoRefreshOverlay(true);
-
-            mMediaStreamingManager.setStreamingSessionListener(this);
-            mMediaStreamingManager.setStreamingStateListener(this);
-            mMediaStreamingManager.setStreamStatusCallback(this);
-        }
-    }
-
     private void startStreaming() {
         new Thread(new Runnable() {
             @Override
@@ -362,15 +622,68 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
         }).start();
     }
 
-    private DnsManager getMyDnsManager() {
-        IResolver r0 = new DnspodFree();
-        IResolver r1 = AndroidDnsServer.defaultResolver();
-        IResolver r2 = null;
-        try {
-            r2 = new Resolver(InetAddress.getByName("119.29.29.29"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    private AVCodecType getAvCodecType(int codecType) {
+        AVCodecType avCodecType;
+        switch (codecType) {
+            case 0:
+                avCodecType = AVCodecType.SW_VIDEO_WITH_HW_AUDIO_CODEC;
+                break;
+            case 1:
+                avCodecType = AVCodecType.SW_VIDEO_WITH_HW_AUDIO_CODEC;
+                break;
+            case 2:
+                avCodecType = AVCodecType.HW_VIDEO_SURFACE_AS_INPUT_WITH_HW_AUDIO_CODEC;
+                break;
+            case 3:
+                avCodecType = AVCodecType.HW_VIDEO_SURFACE_AS_INPUT_WITH_SW_AUDIO_CODEC;
+                break;
+            case 4:
+                avCodecType = AVCodecType.HW_VIDEO_YUV_AS_INPUT_WITH_HW_AUDIO_CODEC;
+                break;
+            case 5:
+                avCodecType = AVCodecType.HW_VIDEO_CODEC;
+                break;
+            case 6:
+                avCodecType = AVCodecType.SW_VIDEO_CODEC;
+                break;
+            case 7:
+                avCodecType = AVCodecType.HW_AUDIO_CODEC;
+                break;
+            case 8:
+                avCodecType = AVCodecType.SW_AUDIO_CODEC;
+                break;
+            default:
+                avCodecType = AVCodecType.HW_VIDEO_SURFACE_AS_INPUT_WITH_HW_AUDIO_CODEC;
+                break;
         }
-        return new DnsManager(NetworkInfo.normal, new IResolver[]{r0, r1, r2});
+        return avCodecType;
+    }
+
+    private StreamingProfile.H264Profile getH264Profile(int h264Profile) {
+        if (h264Profile == 0) {
+            return StreamingProfile.H264Profile.BASELINE;
+        }
+        return h264Profile == 1 ? StreamingProfile.H264Profile.MAIN : StreamingProfile.H264Profile.HIGH;
+    }
+
+    private boolean isAudioStreamingOnly(AVCodecType codecType) {
+        return codecType == AVCodecType.HW_AUDIO_CODEC || codecType == AVCodecType.SW_AUDIO_CODEC;
+    }
+
+    private void initAudioMixer() {
+        mAudioMixer = mMediaStreamingManager.getAudioMixer();
+        mAudioMixer.setOnAudioMixListener(new OnAudioMixListener() {
+            @Override
+            public void onStatusChanged(MixStatus mixStatus) {
+                WritableMap event = Arguments.createMap();
+                event.putInt(STATE, Events.AUDIO_MIX_FINISHED.ordinal());
+                mEventEmitter.receiveEvent(getTargetId(), Events.AUDIO_MIX_FINISHED.toString(), event);
+            }
+
+            @Override
+            public void onProgress(long progress, long duration) {
+
+            }
+        });
     }
 }
