@@ -16,6 +16,7 @@ export default class App extends Component {
     androidPermissionGranted: false,
     state: null,
     streamInfo: null,
+    audioMixProgress: null,
     streamingConfigInput: '',
     streamingConfigError: null,
     streamingConfig: {
@@ -115,6 +116,7 @@ export default class App extends Component {
 
   handleStateChange = state => this.setState({ state })
   handleStreamInfoChange = streamInfo => this.setState({ streamInfo })
+  handleAudioMixProgress = audioMixProgress => this.setState({ audioMixProgress })
 
   handleStreamingConfigInputChange = text => this.setState({ streamingConfigInput: text })
   handleStreamingConfigInputSubmit = () => {
@@ -169,6 +171,7 @@ export default class App extends Component {
       androidPermissionGranted,
       state,
       streamInfo,
+      audioMixProgress,
       streamingConfigInput,
       streamingConfigError,
       streamingConfig
@@ -192,6 +195,7 @@ export default class App extends Component {
     )
     const stateText = state != null ? state : 'none'
     const streamInfoText = streamInfo != null ? JSON.stringify(streamInfo) : 'none'
+    const audioMixProgressText = audioMixProgress != null ? JSON.stringify(audioMixProgress) : 'none'
     const props = {
       ...streamingConfig,
 
@@ -204,6 +208,7 @@ export default class App extends Component {
 
       onStateChange: this.handleStateChange,
       onStreamInfoChange: this.handleStreamInfoChange,
+      onAudioMixProgress: this.handleAudioMixProgress,
       style: {
         width: '100%',
         height: 200,
@@ -301,6 +306,7 @@ export default class App extends Component {
             <Text>Pili@ReactNative</Text>
             <Text>State: {stateText}</Text>
             <Text>StreamInfo: {streamInfoText}</Text>
+            <Text>AudioMixProgress: {audioMixProgressText}</Text>
             <Text>streamingConfig: </Text>
             <Text>{streamingConfigText}</Text>
           </ScrollView>

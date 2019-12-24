@@ -327,6 +327,12 @@ function (_Component) {
       }
     });
 
+    _defineProperty(_assertThisInitialized(_this), "handleAudioMixProgress", function (event) {
+      if (_this.props.onAudioMixProgress) {
+        _this.props.onAudioMixProgress(event.nativeEvent);
+      }
+    });
+
     return _this;
   }
 
@@ -335,7 +341,8 @@ function (_Component) {
     value: function render() {
       return React__default.createElement(PLRNMediaStreaming, _extends({}, this.props, {
         onStateChange: this.handleStateChange,
-        onStreamInfoChange: this.handleStreamInfoChange
+        onStreamInfoChange: this.handleStreamInfoChange,
+        onAudioMixProgress: this.handleAudioMixProgress
       }));
     }
   }]);
@@ -454,7 +461,8 @@ Streaming.propTypes = _objectSpread2({
 
   }).isRequired,
   onStateChange: P.func,
-  onStreamInfoChange: P.func
+  onStreamInfoChange: P.func,
+  onAudioMixProgress: P.func
 }, reactNative.View.propTypes);
 
 function oneOf(kvs) {

@@ -3498,9 +3498,9 @@ pify@^4.0.1:
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
-pili-streaming-react-native@./pili-streaming-react-native-1.0.0-beta.1.tgz:
-  version "1.0.0-beta.1"
-  resolved "./pili-streaming-react-native-1.0.0-beta.1.tgz#63e9a5d966609858d51740fca11bc7c4b6f20966"
+pili-streaming-react-native@./pili-streaming-react-native-1.0.0-beta.3.tgz:
+  version "1.0.0-beta.3"
+  resolved "./pili-streaming-react-native-1.0.0-beta.3.tgz#e2b9ca47a3b593b963efdedd2e742ef2ba18008e"
 
 pirates@^4.0.0:
   version "4.0.1"
