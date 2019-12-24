@@ -71,9 +71,11 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
     private String mPictureStreamingFile = null;
     private boolean mIsPictureStreamingEnabled;
 
-    private String mAudioMixFile;
+    private String mAudioMixFile = null;
     private boolean mIsAudioMixLooping;
     private boolean mIsMixAudioPlaying;
+    private float mMicVolume;
+    private float mMusicVolume;
 
     private boolean mIsPlaybackEnable;
     private boolean mIsPreviewMirror;
@@ -232,10 +234,7 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
             microphoneStreamingSetting.setChannelConfig(AudioFormat.CHANNEL_IN_STEREO);
         }
 
-        Log.i(TAG, "new manager +");
-        mMediaStreamingManager = new MediaStreamingManager(mReactContext, mCameraPreviewFrameView,
-                AVCodecType.SW_VIDEO_WITH_SW_AUDIO_CODEC);
-        Log.i(TAG, "new manager -");
+        mMediaStreamingManager = new MediaStreamingManager(mReactContext, mCameraPreviewFrameView, avCodecType);
         mMediaStreamingManager.prepare(mCameraStreamingSetting, microphoneStreamingSetting, mWatermarkSetting,
                 mProfile);
         mMediaStreamingManager.setAutoRefreshOverlay(true);
@@ -352,6 +351,25 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
         int alpha = watermarkSetting.getInt("alpha");
         ReadableMap customPos = watermarkSetting.getMap("position");
         ReadableMap customSize = watermarkSetting.getMap("size");
+
+        if (alpha < 0) {
+            alpha = 0;
+        } else if (alpha > 255) {
+            alpha = 255;
+        }
+        float customX = (float) customPos.getDouble("x");
+        if (customX < 0) {
+            customX = 0;
+        } else if (customX > 1.0f) {
+            customX = 1.0f;
+        }
+        float customY = (float) customPos.getDouble("y");
+        if (customY < 0) {
+            customY = 0;
+        } else if (customY > 1.0f) {
+            customY = 1.0f;
+        }
+
         if (filePath == null) {
             mWatermarkSetting = null;
         } else {
@@ -359,8 +377,13 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
                 mWatermarkSetting = new WatermarkSetting(mReactContext);
             }
             mWatermarkSetting.setResourcePath(filePath).setAlpha(alpha)
-                    .setCustomPosition((float) customPos.getDouble("x"), (float) customPos.getDouble("y"))
-                    .setCustomSize(customSize.getInt("width"), customSize.getInt("height"));
+                    .setCustomPosition(customX, customY);
+
+            int customWidth = customSize.getInt("width");
+            int customHeight = customSize.getInt("height");
+            if (customWidth > 0 && customHeight > 0) {
+                mWatermarkSetting.setCustomSize(customWidth, customHeight);
+            }
         }
         // TODO : Android 支持配置 bitmap、res drawable、file path
         if (mMediaStreamingManager != null) {
@@ -444,13 +467,13 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
         Log.i(TAG, "file = " + audioMixFile.getString("filePath") + " loop = " + audioMixFile.getBoolean("loop"));
         mAudioMixFile = audioMixFile.getString("filePath");
         mIsAudioMixLooping = audioMixFile.getBoolean("loop");
-        if (mMediaStreamingManager == null) {
+        if (mMediaStreamingManager == null || (mAudioMixFile == null && mAudioMixer == null)) {
             return;
         }
-        if (mAudioMixer == null) {
-            initAudioMixer();
-        }
         try {
+            if (mAudioMixer == null) {
+                initAudioMixer();
+            }
             if (mAudioMixFile == null) {
                 mAudioMixer.stop();
             } else {
@@ -458,6 +481,16 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @ReactProp(name = "audioMixVolume")
+    public void setAudioMixVolume(CameraPreviewFrameView view, ReadableMap audioMixVolume) {
+        mMicVolume = (float) audioMixVolume.getDouble("micVolume");
+        mMusicVolume = (float) audioMixVolume.getDouble("musicVolume");
+        Log.i(TAG, "setAudioMixVolume : " + mMicVolume + " " + mMusicVolume);
+        if (mAudioMixer != null) {
+            mAudioMixer.setVolume(mMicVolume, mMusicVolume);
         }
     }
 
@@ -568,6 +601,7 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
                     }
                 }
                 if (mIsMixAudioPlaying && mAudioMixer != null) {
+                    mAudioMixer.setVolume(mMicVolume, mMusicVolume);
                     mAudioMixer.play();
                 }
                 if (mIsPlaybackEnable) {
@@ -625,31 +659,31 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
     private AVCodecType getAvCodecType(int codecType) {
         AVCodecType avCodecType;
         switch (codecType) {
-            case 0:
-                avCodecType = AVCodecType.SW_VIDEO_WITH_HW_AUDIO_CODEC;
-                break;
-            case 1:
-                avCodecType = AVCodecType.SW_VIDEO_WITH_HW_AUDIO_CODEC;
-                break;
             case 2:
-                avCodecType = AVCodecType.HW_VIDEO_SURFACE_AS_INPUT_WITH_HW_AUDIO_CODEC;
+                avCodecType = AVCodecType.SW_VIDEO_WITH_HW_AUDIO_CODEC;
                 break;
             case 3:
-                avCodecType = AVCodecType.HW_VIDEO_SURFACE_AS_INPUT_WITH_SW_AUDIO_CODEC;
+                avCodecType = AVCodecType.SW_VIDEO_WITH_HW_AUDIO_CODEC;
                 break;
             case 4:
-                avCodecType = AVCodecType.HW_VIDEO_YUV_AS_INPUT_WITH_HW_AUDIO_CODEC;
+                avCodecType = AVCodecType.HW_VIDEO_SURFACE_AS_INPUT_WITH_HW_AUDIO_CODEC;
                 break;
             case 5:
-                avCodecType = AVCodecType.HW_VIDEO_CODEC;
+                avCodecType = AVCodecType.HW_VIDEO_SURFACE_AS_INPUT_WITH_SW_AUDIO_CODEC;
                 break;
             case 6:
-                avCodecType = AVCodecType.SW_VIDEO_CODEC;
+                avCodecType = AVCodecType.HW_VIDEO_YUV_AS_INPUT_WITH_HW_AUDIO_CODEC;
                 break;
             case 7:
-                avCodecType = AVCodecType.HW_AUDIO_CODEC;
+                avCodecType = AVCodecType.HW_VIDEO_CODEC;
                 break;
             case 8:
+                avCodecType = AVCodecType.SW_VIDEO_CODEC;
+                break;
+            case 9:
+                avCodecType = AVCodecType.HW_AUDIO_CODEC;
+                break;
+            case 10:
                 avCodecType = AVCodecType.SW_AUDIO_CODEC;
                 break;
             default:
