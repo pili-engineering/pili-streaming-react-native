@@ -28,9 +28,9 @@ export default class App extends Component {
 
       faceBeautyEnable: false,
       faceBeautySetting: {
-        beautyLevel: 0,
-        whiten: 0,
-        redden: 0,
+        beautyLevel: 1,
+        whiten: 1,
+        redden: 0.8,
       },
       watermarkSetting: {
         src: null, // or `''`？
@@ -52,7 +52,7 @@ export default class App extends Component {
       encodingMirrorEnable: false,
       audioMixFile: {
         filePath: null, // or `''`？
-        loop: false,
+        loop: true,
       },
       playMixAudio: false,
       audioMixVolume: {
@@ -84,7 +84,7 @@ export default class App extends Component {
         encodingSize: consts.videoEncodings.e480,
         avCodecType: (
           isAndroid
-          ? consts.avCodecTypes_android.SW_VIDEO_CODEC
+          ? consts.avCodecTypes_android.HW_VIDEO_SURFACE_AS_INPUT_WITH_HW_AUDIO_CODEC
           : consts.avCodecTypes_iOS.PLH264EncoderType_AVFoundation
         ),
         cameraStreamingSetting: {
@@ -97,7 +97,7 @@ export default class App extends Component {
           videoOrientation: consts.cameraVideoOrientations.landscapeLeft
         },
         microphoneSteamingSetting: {
-          sampleRate: consts.microphoneSampleRates.r16000,
+          sampleRate: consts.microphoneSampleRates.r44100,
           channel: consts.microphoneChannels.mono,
           isAecEnable: false
         },
