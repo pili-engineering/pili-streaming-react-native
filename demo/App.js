@@ -224,16 +224,18 @@ export default class App extends Component {
           <Streaming {...props} />
           <ScrollView style={{ flex: 1, backgroundColor : 'white', padding: 10 }}>
 
-            <TextInput
-              multiline
-              numberOfLines={4}
-              value={streamingConfigInput}
-              onChangeText={this.handleStreamingConfigInputChange}
-              placeholder={'请输入 JSON 格式的配置，如 { "camera": "front" }'}
-              style={{ backgroundColor: '#f0f0f0', lineHeight: 30, height: 120 }}
-            />
-            {streamingConfigErrorText}
-            <Button title="提交" onPress={this.handleStreamingConfigInputSubmit} />
+            <View style={{ display: 'none' }}>
+              <TextInput
+                multiline
+                numberOfLines={4}
+                value={streamingConfigInput}
+                onChangeText={this.handleStreamingConfigInputChange}
+                placeholder={'请输入 JSON 格式的配置，如 { "camera": "front" }'}
+                style={{ backgroundColor: '#f0f0f0', lineHeight: 30, height: 120 }}
+              />
+              {streamingConfigErrorText}
+              <Button title="提交" onPress={this.handleStreamingConfigInputSubmit} />
+            </View>
 
             <SwitchInput label="开始推流" {...this.bindStateOfPath('streamingConfig.started')} />
             <SwitchInput label="静音" {...this.bindStateOfPath('streamingConfig.muted')} />
@@ -273,7 +275,7 @@ export default class App extends Component {
             <NumberInput label="内置美颜美白程度" {...this.bindStateOfPath('streamingConfig.faceBeautySetting.whiten')} />
             <NumberInput label="内置美颜红润程度" {...this.bindStateOfPath('streamingConfig.faceBeautySetting.redden')} />
 
-            <FileInput label="水印文件" {...this.bindStateOfPath('streamingConfig.watermarkSetting.src')} />
+            <FileInput label="水印文件" {...this.bindStateOfPath('streamingConfig.watermarkSetting.src')} initialFromUrl="http://oyojsr1f8.bkt.clouddn.com/qiniu_logo.png" />
             <NumberInput label="水印文件透明度" {...this.bindStateOfPath('streamingConfig.watermarkSetting.alpha')} />
             <NumberInput label="水印水平位置" {...this.bindStateOfPath('streamingConfig.watermarkSetting.position.x')} />
             <NumberInput label="水印垂直位置" {...this.bindStateOfPath('streamingConfig.watermarkSetting.position.y')} />
@@ -281,7 +283,7 @@ export default class App extends Component {
             <NumberInput label="水印高度" {...this.bindStateOfPath('streamingConfig.watermarkSetting.size.height')} />
 
             <SwitchInput label="图片推流" {...this.bindStateOfPath('streamingConfig.pictureStreamingEnable')} />
-            <FileInput label="图片推流文件" {...this.bindStateOfPath('streamingConfig.pictureStreamingFile')} />
+            <FileInput label="图片推流文件" {...this.bindStateOfPath('streamingConfig.pictureStreamingFile')} initialFromUrl="http://oyojsr1f8.bkt.clouddn.com/pause_publish.png" />
 
             <SwitchInput label="开启闪光灯" {...this.bindStateOfPath('streamingConfig.torchEnable')} />
             <SwitchInput label="截图" {...this.bindStateOfPath('streamingConfig.captureFrame')} />
@@ -289,7 +291,7 @@ export default class App extends Component {
             <SwitchInput label="编码镜像设置" {...this.bindStateOfPath('streamingConfig.encodingMirrorEnable')} />
 
             <SwitchInput label="播放混音文件" {...this.bindStateOfPath('streamingConfig.playMixAudio')} />
-            <FileInput label="混音文件" {...this.bindStateOfPath('streamingConfig.audioMixFile.filePath')} />
+            <FileInput label="混音文件" {...this.bindStateOfPath('streamingConfig.audioMixFile.filePath')} initialFromUrl="http://oyojsr1f8.bkt.clouddn.com/Lovestoned-Thursdays.mp3" />
             <SwitchInput label="混音文件循环播放" {...this.bindStateOfPath('streamingConfig.audioMixFile.loop')} />
             <NumberInput label="混音音量 micVolume" {...this.bindStateOfPath('streamingConfig.audioMixVolume.micVolume')} />
             <NumberInput label="混音音量 musicVolume" {...this.bindStateOfPath('streamingConfig.audioMixVolume.musicVolume')} />
