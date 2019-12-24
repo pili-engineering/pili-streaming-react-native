@@ -6,7 +6,7 @@ import merge from 'merge'
 import React, { Component } from 'react'
 import { SafeAreaView, Text, StatusBar, ScrollView, View, Button, Platform, PermissionsAndroid, TextInput } from 'react-native'
 import { consts, Streaming } from 'pili-streaming-react-native'
-import { FileInput, AvCodecTypeInput, CameraResolutionInput, CameraFocusModeInput, CameraVideoOrientationInput, MicrophoneSampleRateInput, MicrophoneChannelInput, SwitchInput, VideoEncodeOrientationInput, VideoH264ProfileInput, BitrateAdjustModeInput, EncoderRCModeInput, CameraInput } from './components/Input'
+import { FileInput, AvCodecTypeInput, CameraResolutionInput, CameraFocusModeInput, CameraVideoOrientationInput, MicrophoneSampleRateInput, MicrophoneChannelInput, SwitchInput, VideoEncodeOrientationInput, VideoH264ProfileInput, BitrateAdjustModeInput, EncoderRCModeInput, CameraInput, NumberInput } from './components/Input'
 
 const isAndroid = Platform.OS === 'android'
 
@@ -224,16 +224,18 @@ export default class App extends Component {
           <Streaming {...props} />
           <ScrollView style={{ flex: 1, backgroundColor : 'white', padding: 10 }}>
 
-            <TextInput
-              multiline
-              numberOfLines={4}
-              value={streamingConfigInput}
-              onChangeText={this.handleStreamingConfigInputChange}
-              placeholder={'请输入 JSON 格式的配置，如 { "camera": "front" }'}
-              style={{ backgroundColor: '#f0f0f0', lineHeight: 30, height: 120 }}
-            />
-            {streamingConfigErrorText}
-            <Button title="提交" onPress={this.handleStreamingConfigInputSubmit} />
+            <View style={{ display: 'none' }}>
+              <TextInput
+                multiline
+                numberOfLines={4}
+                value={streamingConfigInput}
+                onChangeText={this.handleStreamingConfigInputChange}
+                placeholder={'请输入 JSON 格式的配置，如 { "camera": "front" }'}
+                style={{ backgroundColor: '#f0f0f0', lineHeight: 30, height: 120 }}
+              />
+              {streamingConfigErrorText}
+              <Button title="提交" onPress={this.handleStreamingConfigInputSubmit} />
+            </View>
 
             <SwitchInput label="开始推流" {...this.bindStateOfPath('streamingConfig.started')} />
             <SwitchInput label="静音" {...this.bindStateOfPath('streamingConfig.muted')} />
@@ -252,26 +254,36 @@ export default class App extends Component {
 
             <VideoEncodeOrientationInput {...this.bindStateOfPath('streamingConfig.profile.videoStreamingSetting.encodeOrientation')} />
             <VideoH264ProfileInput {...this.bindStateOfPath('streamingConfig.profile.videoStreamingSetting.h264Profile')} />
-            {/* TODO: customVideoEncodeSize */}
 
-            {/* TODO: audioStreamingSetting */}
+            <NumberInput label="自定义视频编码分辨率宽度" {...this.bindStateOfPath('streamingConfig.profile.videoStreamingSetting.customVideoEncodeSize.width')} />
+            <NumberInput label="自定义视频编码分辨率高度" {...this.bindStateOfPath('streamingConfig.profile.videoStreamingSetting.customVideoEncodeSize.height')} />
+
+            <NumberInput label="音频采样率" {...this.bindStateOfPath('streamingConfig.profile.audioStreamingSetting.rate')} />
+            <NumberInput label="音频码率" {...this.bindStateOfPath('streamingConfig.profile.audioStreamingSetting.bitrate')} />
 
             <SwitchInput label="使用 QUIC 协议" {...this.bindStateOfPath('streamingConfig.profile.quicEnable')} />
             <BitrateAdjustModeInput {...this.bindStateOfPath('streamingConfig.profile.bitrateAdjustMode')} />
-            {/* TODO: adaptiveBitrateRange */}
+            <NumberInput label="自适应码率调节范围下限" {...this.bindStateOfPath('streamingConfig.profile.adaptiveBitrateRange.minBitrate')} />
+            <NumberInput label="自适应码率调节范围上限" {...this.bindStateOfPath('streamingConfig.profile.adaptiveBitrateRange.maxBitrate')} />
+
             <EncoderRCModeInput {...this.bindStateOfPath('streamingConfig.profile.encoderRCMode')} />
-            {/* TODO: streamInfoUpdateInterval */}
+
+            <NumberInput label="streamInfo 更新间隔" {...this.bindStateOfPath('streamingConfig.profile.streamInfoUpdateInterval')} />
 
             <SwitchInput label="内置美颜" {...this.bindStateOfPath('streamingConfig.faceBeautyEnable')} />
-            {/* TODO: faceBeautySetting */}
+            <NumberInput label="内置美颜磨皮程度" {...this.bindStateOfPath('streamingConfig.faceBeautySetting.beautyLevel')} />
+            <NumberInput label="内置美颜美白程度" {...this.bindStateOfPath('streamingConfig.faceBeautySetting.whiten')} />
+            <NumberInput label="内置美颜红润程度" {...this.bindStateOfPath('streamingConfig.faceBeautySetting.redden')} />
 
-            <FileInput label="水印文件" {...this.bindStateOfPath('streamingConfig.watermarkSetting.src')} />
-            {/* TODO: watermarkSetting.alpha */}
-            {/* TODO: watermarkSetting.position */}
-            {/* TODO: watermarkSetting.size */}
+            <FileInput label="水印文件" {...this.bindStateOfPath('streamingConfig.watermarkSetting.src')} initialFromUrl="http://oyojsr1f8.bkt.clouddn.com/qiniu_logo.png" />
+            <NumberInput label="水印文件透明度" {...this.bindStateOfPath('streamingConfig.watermarkSetting.alpha')} />
+            <NumberInput label="水印水平位置" {...this.bindStateOfPath('streamingConfig.watermarkSetting.position.x')} />
+            <NumberInput label="水印垂直位置" {...this.bindStateOfPath('streamingConfig.watermarkSetting.position.y')} />
+            <NumberInput label="水印宽度" {...this.bindStateOfPath('streamingConfig.watermarkSetting.size.width')} />
+            <NumberInput label="水印高度" {...this.bindStateOfPath('streamingConfig.watermarkSetting.size.height')} />
 
             <SwitchInput label="图片推流" {...this.bindStateOfPath('streamingConfig.pictureStreamingEnable')} />
-            <FileInput label="图片推流文件" {...this.bindStateOfPath('streamingConfig.pictureStreamingFile')} />
+            <FileInput label="图片推流文件" {...this.bindStateOfPath('streamingConfig.pictureStreamingFile')} initialFromUrl="http://oyojsr1f8.bkt.clouddn.com/pause_publish.png" />
 
             <SwitchInput label="开启闪光灯" {...this.bindStateOfPath('streamingConfig.torchEnable')} />
             <SwitchInput label="截图" {...this.bindStateOfPath('streamingConfig.captureFrame')} />
@@ -279,11 +291,12 @@ export default class App extends Component {
             <SwitchInput label="编码镜像设置" {...this.bindStateOfPath('streamingConfig.encodingMirrorEnable')} />
 
             <SwitchInput label="播放混音文件" {...this.bindStateOfPath('streamingConfig.playMixAudio')} />
-            <FileInput label="混音文件" {...this.bindStateOfPath('streamingConfig.audioMixFile.filePath')} />
+            <FileInput label="混音文件" {...this.bindStateOfPath('streamingConfig.audioMixFile.filePath')} initialFromUrl="http://oyojsr1f8.bkt.clouddn.com/Lovestoned-Thursdays.mp3" />
             <SwitchInput label="混音文件循环播放" {...this.bindStateOfPath('streamingConfig.audioMixFile.loop')} />
-            {/* TODO: audioMixVolume */}
+            <NumberInput label="混音音量 micVolume" {...this.bindStateOfPath('streamingConfig.audioMixVolume.micVolume')} />
+            <NumberInput label="混音音量 musicVolume" {...this.bindStateOfPath('streamingConfig.audioMixVolume.musicVolume')} />
 
-            <SwitchInput label="混音功能" {...this.bindStateOfPath('streamingConfig.playbackEnable')} />
+            <SwitchInput label="返听功能" {...this.bindStateOfPath('streamingConfig.playbackEnable')} />
 
             <Text>Pili@ReactNative</Text>
             <Text>State: {stateText}</Text>

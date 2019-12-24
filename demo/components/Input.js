@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Platform, Picker, Text, TextInput, Button, View, Switch } from 'react-native'
 import { consts } from 'pili-streaming-react-native'
 import { DocumentDirectoryPath, downloadFile } from 'react-native-fs'
@@ -100,8 +100,8 @@ export function EncoderRCModeInput(props) {
   return <SelectWithKVs label="码率控制（EncoderRCMode）" kvs={consts.encoderRCModes} {...props} />
 }
 
-export function FileInput({ label, onChange }) {
-  const [fromUrl, setFromUrl] = useState('')
+export function FileInput({ label, initialFromUrl, onChange }) {
+  const [fromUrl, setFromUrl] = useState(initialFromUrl || '')
   const [result, setResult] = useState('')
 
   const handleDownload = () => {
@@ -114,12 +114,18 @@ export function FileInput({ label, onChange }) {
     const toFile = DocumentDirectoryPath + '/' + fileName
     downloadFile({ fromUrl, toFile }).promise.then(
       () => {
-        setResult('保存到：' + toFile)
+        setResult('已保存到：' + toFile)
         onChange(toFile)
       },
       e => setResult('下载失败：' + (e && e.message))
     )
   }
+
+  useEffect(() => {
+    if (fromUrl) {
+      handleDownload()
+    }
+  }, [])
 
   return (
     <View style={{ marginTop: 10 }}>
@@ -129,7 +135,7 @@ export function FileInput({ label, onChange }) {
         onChangeText={setFromUrl}
         style={{ backgroundColor: '#f0f0f0', height: 40 }}
       />
-      {result ? <Text>{result}</Text> : null}
+      {result ? <Text style={{ marginTop: 5, marginBottom: 5, fontSize: 12, color: '#666' }}>{result}</Text> : null}
       <Button title={'加载' + label} onPress={handleDownload} />
     </View>
   )
@@ -140,6 +146,17 @@ export function SwitchInput({ label, value, onChange }) {
     <View style={{ marginTop: 10, flexDirection: 'row' }}>
       <Text style={{ flex: 1, lineHeight: 30 }}>{label}</Text>
       <Switch value={value} onValueChange={onChange} />
+    </View>
+  )
+}
+
+export function NumberInput({ label, value, onChange }) {
+  const [valueText, setValueText] = useState(value + '')
+  return (
+    <View style={{ marginTop: 10 }}>
+      <Text style={{ lineHeight: 40 }}>{label}</Text>
+      <TextInput style={{ flex: 1, backgroundColor: '#f0f0f0', height: 40 }} value={valueText} onChangeText={setValueText} />
+      <Button title="提交" onPress={() => onChange(parseFloat(valueText))} />
     </View>
   )
 }
