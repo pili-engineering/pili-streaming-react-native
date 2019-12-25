@@ -82,6 +82,7 @@ const char *networkStatus[] = {
     _muted = NO;
     _focus = NO;
     _isPlayerFinish = NO;
+    _camera = @"front";
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleInterruption:)
