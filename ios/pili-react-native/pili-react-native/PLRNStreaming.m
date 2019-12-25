@@ -56,6 +56,7 @@ typedef NS_ENUM(NSUInteger, PLRNStreamState) {
   BOOL _playMixAudio;
   NSDictionary * _audioMixVolume;
   BOOL _playbackEnable;
+  BOOL _isPlayerFinish;
 }
 
 const char *stateNames[] = {
@@ -81,7 +82,7 @@ const char *networkStatus[] = {
     _started = YES;
     _muted = NO;
     _focus = NO;
-    _camera = @"front";
+    _isPlayerFinish = NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleInterruption:)
@@ -290,7 +291,13 @@ const char *networkStatus[] = {
 - (void)setPictureStreamingEnable:(BOOL)pictureStreamingEnable {
     _pictureStreamingEnable = pictureStreamingEnable;
     UIImage * pushImage = [UIImage imageWithContentsOfFile:_pictureStreamingFile];
-    [self.session setPushImage:pushImage];
+    if (pictureStreamingEnable && _pictureStreamingFile) {
+        [self.session setPushImage:pushImage];
+    }else {
+        [self.session setPushImage:nil];
+        [self.session startCaptureSession];
+    }
+    
 }
 
 - (void)setPictureStreamingFile:(NSString *)pictureStreamingFile {
@@ -448,7 +455,12 @@ const char *networkStatus[] = {
 }
 
 - (void)audioPlayer:(PLAudioPlayer *)audioPlayer audioDidPlayedRateChanged:(double)audioDidPlayedRate {
-    
+    self.onAudioMixProgress(@{@"progress":@(audioDidPlayedRate * self.audioPlayer.audioLength),@"duration":@(self.audioPlayer.audioLength),@"finish":@(_isPlayerFinish)});
+}
+
+- (BOOL)didAudioFilePlayingFinishedAndShouldAudioPlayerPlayAgain:(PLAudioPlayer *)audioPlayer {
+    _isPlayerFinish = YES;
+    return [_audioMixFile[@"loop"] boolValue];
 }
 
 - (void)handleInterruption:(NSNotification *)notification {
