@@ -48,7 +48,6 @@ export default class App extends Component {
       pictureStreamingFile: null,
       pictureStreamingEnable: false,
       torchEnable: false,
-      captureFrame: false,
       previewMirrorEnable: false,
       encodingMirrorEnable: false,
       audioMixFile: {
@@ -291,7 +290,6 @@ export default class App extends Component {
             <FileInput label="图片推流文件" {...this.bindStateOfPath('streamingConfig.pictureStreamingFile')} initialFromUrl="http://oyojsr1f8.bkt.clouddn.com/pause_publish.png" />
 
             <SwitchInput label="开启闪光灯" {...this.bindStateOfPath('streamingConfig.torchEnable')} />
-            <SwitchInput label="截图" {...this.bindStateOfPath('streamingConfig.captureFrame')} />
             <SwitchInput label="预览镜像设置" {...this.bindStateOfPath('streamingConfig.previewMirrorEnable')} />
             <SwitchInput label="编码镜像设置" {...this.bindStateOfPath('streamingConfig.encodingMirrorEnable')} />
 
