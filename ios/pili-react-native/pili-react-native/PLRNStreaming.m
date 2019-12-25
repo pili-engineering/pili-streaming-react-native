@@ -32,6 +32,7 @@ typedef NS_ENUM(NSUInteger, PLRNStreamState) {
 
 @property (nonatomic, copy) RCTDirectEventBlock onStateChange;
 @property (nonatomic, copy) RCTDirectEventBlock onStreamInfoChange;
+@property (nonatomic, copy) RCTDirectEventBlock onAudioMixProgress;
 @property (nonatomic, strong) PLAudioPlayer *audioPlayer;
 
 @end
@@ -218,6 +219,10 @@ const char *networkStatus[] = {
             if(_muted){
                 [self setMuted:_muted];
             }
+            
+            if (_started) {
+                [self startSession];
+            }
         });
     
         
@@ -225,7 +230,7 @@ const char *networkStatus[] = {
 }
 
 - (void)setStarted:(BOOL) started {
-    if(started != _started && self.session){
+    if(started != _started){
         if(started){
             [self startSession];
             _started = started;
@@ -274,7 +279,7 @@ const char *networkStatus[] = {
 
 - (void)setWatermarkSetting:(NSDictionary *)watermarkSetting {
   _watermarkSetting = [watermarkSetting copy];
-    if (!(watermarkSetting[@"src"] == [NSNull null])  && ![watermarkSetting[@"src"] isEqual:@""] && [watermarkSetting[@"src"] containsString:@"/"]) {
+  if (watermarkSetting && (watermarkSetting[@"src"] != [NSNull null]) &&![watermarkSetting[@"src"] isEqual:@""] && [watermarkSetting[@"src"] containsString:@"/"]) {
     UIImage *waterMark = [UIImage imageWithContentsOfFile:watermarkSetting[@"src"]];
     [self.session setWaterMarkWithImage:waterMark position:CGPointMake([watermarkSetting[@"position"][@"x"] floatValue], [watermarkSetting[@"position"][@"y"] floatValue])];
   }else {
@@ -284,15 +289,13 @@ const char *networkStatus[] = {
 
 - (void)setPictureStreamingEnable:(BOOL)pictureStreamingEnable {
     _pictureStreamingEnable = pictureStreamingEnable;
+    UIImage * pushImage = [UIImage imageWithContentsOfFile:_pictureStreamingFile];
+    [self.session setPushImage:pushImage];
 }
 
 - (void)setPictureStreamingFile:(NSString *)pictureStreamingFile {
-  if (!_pictureStreamingEnable) {
-    return;
-  }
   _pictureStreamingFile = pictureStreamingFile;
-  UIImage * pushImage = [UIImage imageWithContentsOfFile:pictureStreamingFile];
-  [self.session setPushImage:pushImage];
+  
 }
 
 - (void)setTorchEnable:(BOOL)torchEnable {
@@ -332,10 +335,11 @@ const char *networkStatus[] = {
 }
 
 - (void)setAudioMixFile:(NSDictionary *)audioMixFile {
-  if (audioMixFile && (audioMixFile[@"filePath"] != [NSNull null]) && [audioMixFile[@"filePath"] containsString:@"/"]) {
+  if (audioMixFile && audioMixFile[@"filePath"] != [NSNull null] && [audioMixFile[@"filePath"] containsString:@"/"]) {
     _audioMixFile = [audioMixFile copy];
     self.audioPlayer = [self.session audioPlayerWithFilePath:audioMixFile[@"filePath"]];
   }
+  
 }
 
 - (void)setPlayMixAudio:(BOOL)playMixAudio {
@@ -347,6 +351,7 @@ const char *networkStatus[] = {
       [self.audioPlayer pause];
     }
   }
+  
 }
 
 - (void)setAudioMixVolume:(NSDictionary *)audioMixVolume {
@@ -355,6 +360,7 @@ const char *networkStatus[] = {
     self.session.inputGain = [audioMixVolume[@"micVolume"] floatValue];
     self.audioPlayer.volume = [audioMixVolume[@"musicVolume"] floatValue];
   }
+  
 }
 
 - (void)setPlaybackEnable:(BOOL)playbackEnable {
@@ -439,6 +445,10 @@ const char *networkStatus[] = {
     NSString *log = [NSString stringWithFormat:@"Stream State: Error. %@", error];
     NSLog(@"%@", log);
     [self startSession];
+}
+
+- (void)audioPlayer:(PLAudioPlayer *)audioPlayer audioDidPlayedRateChanged:(double)audioDidPlayedRate {
+    
 }
 
 - (void)handleInterruption:(NSNotification *)notification {
