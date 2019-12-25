@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "merge": "^1.2.1",
-    "pili-streaming-react-native": "./pili-streaming-react-native-1.0.0-beta.8.tgz",
+    "pili-streaming-react-native": "./pili-streaming-react-native-1.0.0-beta.3.tgz",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
     "react-native": "0.61.5",

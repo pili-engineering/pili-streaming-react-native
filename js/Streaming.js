@@ -25,12 +25,19 @@ export default class Streaming extends Component {
     }
   }
 
+  handleAudioMixProgress = (event) => {
+    if (this.props.onAudioMixProgress) {
+      this.props.onAudioMixProgress(event.nativeEvent)
+    }
+  }
+
   render() {
     return (
       <PLRNMediaStreaming
         {...this.props}
         onStateChange={this.handleStateChange}
         onStreamInfoChange={this.handleStreamInfoChange}
+        onAudioMixProgress={this.handleAudioMixProgress}
       />
     )
   }
@@ -134,6 +141,7 @@ Streaming.propTypes = {
 
   onStateChange: P.func,
   onStreamInfoChange: P.func,
+  onAudioMixProgress: P.func,
 
   ...View.propTypes
 }

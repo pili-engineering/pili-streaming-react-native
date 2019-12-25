@@ -30,21 +30,4 @@ public class Utils {
         }
         return new DnsManager(NetworkInfo.normal, new IResolver[]{r0, r1, r2});
     }
-
-    public static boolean saveToSDCard(final Context context, String filename, Bitmap bmp) throws IOException {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File file = new File(Config.SCREENSHOT_DIRECTORY, filename);
-            BufferedOutputStream bos = null;
-            try {
-                bos = new BufferedOutputStream(new FileOutputStream(file));
-                bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
-                bmp.recycle();
-                bmp = null;
-            } finally {
-                if (bos != null) bos.close();
-            }
-            return true;
-        }
-        return false;
-    }
 }

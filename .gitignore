@@ -1,2 +1,4 @@
 node_modules
+android/.idea
+*.iml
 # index.js
