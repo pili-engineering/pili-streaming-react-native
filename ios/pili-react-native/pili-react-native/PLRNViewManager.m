@@ -36,7 +36,8 @@ RCT_EXPORT_MODULE(PLRNMediaStreaming)
 }
 
 RCT_EXPORT_VIEW_PROPERTY(onStateChange, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onStreamInfoChange, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onStreamInfoChange, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onAudioMixProgress, RCTDirectEventBlock);
 
 RCT_EXPORT_VIEW_PROPERTY(rtmpURL, NSString);
 RCT_EXPORT_VIEW_PROPERTY(profile, NSDictionary);
@@ -51,7 +52,6 @@ RCT_EXPORT_VIEW_PROPERTY(watermarkSetting, NSDictionary);
 RCT_EXPORT_VIEW_PROPERTY(pictureStreamingEnable, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(pictureStreamingFile, NSString);
 RCT_EXPORT_VIEW_PROPERTY(torchEnable, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(captureFrame, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(previewMirrorEnable, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(encodingMirrorEnable, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(audioMixFile, NSDictionary);

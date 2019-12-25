@@ -294,7 +294,7 @@ var _const = /*#__PURE__*/Object.freeze({
   encoderRCModes: encoderRCModes
 });
 
-var PLRNMediaStreaming = reactNative.requireNativeComponent('PLRNMediaStreaming'); // const PLRNMediaStreaming = View
+var PLRNMediaStreaming = reactNative.requireNativeComponent('PLRNMediaStreaming');
 
 var Streaming =
 /*#__PURE__*/
@@ -386,8 +386,7 @@ Streaming.propTypes = _objectSpread2({
   // 开始/关闭图片推流
   torchEnable: P.bool,
   // 开启、关闭闪光灯
-  captureFrame: P.bool,
-  // 截图
+  // captureFrame: P.bool, // TODO: 截图
   previewMirrorEnable: P.bool,
   // 预览镜像设置
   encodingMirrorEnable: P.bool,

@@ -42,13 +42,12 @@ export default class App extends Component {
         },
         size: {
           width: 50,
-          height: 50
+          height: 20
         },
       },
       pictureStreamingFile: null,
       pictureStreamingEnable: false,
       torchEnable: false,
-      captureFrame: false,
       previewMirrorEnable: false,
       encodingMirrorEnable: false,
       audioMixFile: {
@@ -65,7 +64,7 @@ export default class App extends Component {
       profile: {
         videoStreamingSetting: {
           fps: 30,
-          bps: 800 * 1024,
+          bps: 1000 * 1024,
           maxFrameInterval: 60,
           encodeOrientation: consts.videoEncodeOrientations.portrait,
           h264Profile: (
@@ -85,16 +84,16 @@ export default class App extends Component {
         encodingSize: consts.videoEncodings.e480,
         avCodecType: (
           isAndroid
-          ? consts.avCodecTypes_android.HW_VIDEO_SURFACE_AS_INPUT_WITH_HW_AUDIO_CODEC
+          ? consts.avCodecTypes_android.SW_VIDEO_WITH_SW_AUDIO_CODEC
           : consts.avCodecTypes_iOS.PLH264EncoderType_AVFoundation
         ),
         cameraStreamingSetting: {
           resolution: (
             isAndroid
-            ? consts.cameraResolutions_android.MEDIUM_RATIO_4_3
+            ? consts.cameraResolutions_android.MEDIUM_RATIO_16_9
             : consts.cameraResolutions_iOS.AVCaptureSessionPresetMedium
           ),
-          focusMode: consts.cameraFocusModes.auto,
+          focusMode: consts.cameraFocusModes.continuousVideo,
           videoOrientation: consts.cameraVideoOrientations.portrait
         },
         microphoneSteamingSetting: {
@@ -291,7 +290,6 @@ export default class App extends Component {
             <FileInput label="图片推流文件" {...this.bindStateOfPath('streamingConfig.pictureStreamingFile')} initialFromUrl="http://oyojsr1f8.bkt.clouddn.com/pause_publish.png" />
 
             <SwitchInput label="开启闪光灯" {...this.bindStateOfPath('streamingConfig.torchEnable')} />
-            <SwitchInput label="截图" {...this.bindStateOfPath('streamingConfig.captureFrame')} />
             <SwitchInput label="预览镜像设置" {...this.bindStateOfPath('streamingConfig.previewMirrorEnable')} />
             <SwitchInput label="编码镜像设置" {...this.bindStateOfPath('streamingConfig.encodingMirrorEnable')} />
 

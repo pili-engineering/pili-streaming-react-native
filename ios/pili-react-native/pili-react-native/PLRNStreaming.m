@@ -49,7 +49,6 @@ typedef NS_ENUM(NSUInteger, PLRNStreamState) {
   BOOL _pictureStreamingEnable;
   NSString * _pictureStreamingFile;
   BOOL _torchEnable;
-  BOOL _captureFrame;
   BOOL _previewMirrorEnable;
   BOOL _encodingMirrorEnable;
   NSDictionary *_audioMixFile;
@@ -308,25 +307,6 @@ const char *networkStatus[] = {
 - (void)setTorchEnable:(BOOL)torchEnable {
   _torchEnable = torchEnable;
   [self.session setTorchOn:torchEnable];
-}
-
-- (void)setCaptureFrame:(BOOL)captureFrame {
-  _captureFrame = captureFrame;
-  if (captureFrame) {
-    [self.session getScreenshotWithCompletionHandler:^(UIImage * _Nullable image) {
-      UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
-    }];
-  }
-}
-
-- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
-{
-    if (error) {
-        // 保存失败
-      NSLog(@"保存失败");
-    } else {
-      NSLog(@"保存成功");
-    }
 }
 
 - (void)setPreviewMirrorEnable:(BOOL)previewMirrorEnable {

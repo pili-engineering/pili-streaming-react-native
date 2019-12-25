@@ -3502,6 +3502,10 @@ pili-streaming-react-native@./pili-streaming-react-native-1.0.0-beta.3.tgz:
   version "1.0.0-beta.3"
   resolved "./pili-streaming-react-native-1.0.0-beta.3.tgz#e2b9ca47a3b593b963efdedd2e742ef2ba18008e"
 
+pili-streaming-react-native@./pili-streaming-react-native-1.0.0-beta.4.tgz:
+  version "1.0.0-beta.4"
+  resolved "./pili-streaming-react-native-1.0.0-beta.4.tgz#90de139a66ef389a178b227b7cea0c95240d664d"
+
 pirates@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/pirates/-/pirates-4.0.1.tgz#643a92caf894566f91b2b986d2c66950a8e2fb87"

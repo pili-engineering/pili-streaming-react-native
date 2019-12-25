@@ -9,7 +9,6 @@ import { View, requireNativeComponent } from 'react-native'
 import * as consts from './const'
 
 const PLRNMediaStreaming = requireNativeComponent('PLRNMediaStreaming')
-// const PLRNMediaStreaming = View
 
 export default class Streaming extends Component {
 
@@ -72,7 +71,7 @@ Streaming.propTypes = {
   pictureStreamingFile: P.string, // 图片推流文件，值为文件路径
   pictureStreamingEnable: P.bool, // 开始/关闭图片推流
   torchEnable: P.bool, // 开启、关闭闪光灯
-  captureFrame: P.bool, // 截图
+  // captureFrame: P.bool, // TODO: 截图
   previewMirrorEnable: P.bool, // 预览镜像设置
   encodingMirrorEnable: P.bool, // 编码镜像设置
   audioMixFile: P.shape({ // 混音

@@ -74,6 +74,7 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
     private String mAudioMixFile = null;
     private boolean mIsAudioMixLooping;
     private boolean mIsMixAudioPlaying;
+    private volatile boolean mIsAudioMixFinished;
     private float mMicVolume;
     private float mMusicVolume;
 
@@ -86,7 +87,7 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
     private CameraStreamingSetting.VIDEO_FILTER_TYPE mCurrentVideoFilterType = CameraStreamingSetting.VIDEO_FILTER_TYPE.VIDEO_FILTER_BEAUTY;
 
     public enum Events {
-        READY, CONNECTING, STREAMING, SHUTDOWN, IOERROR, DISCONNECTED, AUDIO_MIX_FINISHED, STREAM_INFO_CHANGE,
+        READY, CONNECTING, STREAMING, SHUTDOWN, IOERROR, DISCONNECTED, STREAM_INFO_CHANGE, AUDIO_MIX_INFO
     }
 
     @NonNull
@@ -135,10 +136,10 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
                         MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
                 .put(Events.DISCONNECTED.toString(),
                         MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
-                .put(Events.AUDIO_MIX_FINISHED.toString(),
-                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStateChange")))
                 .put(Events.STREAM_INFO_CHANGE.toString(),
                         MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onStreamInfoChange")))
+                .put(Events.AUDIO_MIX_INFO.toString(),
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onAudioMixProgress")))
                 .build();
     }
 
@@ -189,7 +190,8 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
                 .setStreamStatusConfig(new StreamingProfile.StreamStatusConfig(streamStatusConfig))
                 .setEncodingOrientation(encodeOrientation == 0 ? StreamingProfile.ENCODING_ORIENTATION.PORT
                         : StreamingProfile.ENCODING_ORIENTATION.LAND)
-                .setSendingBufferProfile(new StreamingProfile.SendingBufferProfile(0.2f, 0.8f, 3.0f, 20 * 1000));
+                .setSendingBufferProfile(new StreamingProfile.SendingBufferProfile(0.2f, 0.8f, 3.0f, 20 * 1000))
+                .setPictureStreamingFps(10);
         if (mPublishUrl != null) {
             try {
                 mProfile.setPublishUrl(mPublishUrl);
@@ -199,7 +201,6 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
         }
         if (mPictureStreamingFile != null) {
             mProfile.setPictureStreamingFilePath(mPictureStreamingFile);
-            mPictureStreamingFile = null;
         }
         if (customVideoEncodeSize != null && customVideoEncodeSize.x != 0 && customVideoEncodeSize.y != 0) {
             mProfile.setPreferredVideoEncodingSize(customVideoEncodeSize.x, customVideoEncodeSize.y);
@@ -397,7 +398,6 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
         mPictureStreamingFile = pictureStreamingFile;
         if (mMediaStreamingManager != null) {
             mMediaStreamingManager.setPictureStreamingFilePath(pictureStreamingFile);
-            mPictureStreamingFile = null;
         }
     }
 
@@ -409,8 +409,8 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
         if (mMediaStreamingManager == null) {
             return;
         }
-        if ((pictureStreamingEnable && !mMediaStreamingManager.isPictureStreaming())
-                || (!pictureStreamingEnable && mMediaStreamingManager.isPictureStreaming())) {
+        if ((mIsPictureStreamingEnabled && !mMediaStreamingManager.isPictureStreaming())
+                || (!mIsPictureStreamingEnabled && mMediaStreamingManager.isPictureStreaming())) {
             mMediaStreamingManager.togglePictureStreaming();
         }
     }
@@ -455,8 +455,7 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
             return;
         }
         if (mIsPlaybackEnable) {
-            boolean ret = mMediaStreamingManager.startPlayback();
-            Log.i(TAG, "playback ret = " + ret);
+            mMediaStreamingManager.startPlayback();
         } else {
             mMediaStreamingManager.stopPlayback();
         }
@@ -709,14 +708,18 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
         mAudioMixer.setOnAudioMixListener(new OnAudioMixListener() {
             @Override
             public void onStatusChanged(MixStatus mixStatus) {
-                WritableMap event = Arguments.createMap();
-                event.putInt(STATE, Events.AUDIO_MIX_FINISHED.ordinal());
-                mEventEmitter.receiveEvent(getTargetId(), Events.AUDIO_MIX_FINISHED.toString(), event);
+                if (mixStatus == MixStatus.Finish) {
+                    mIsAudioMixFinished = true;
+                }
             }
 
             @Override
             public void onProgress(long progress, long duration) {
-
+                WritableMap event = Arguments.createMap();
+                event.putInt("progress", (int) progress);
+                event.putInt("duration", (int) duration);
+                event.putBoolean("finished", mIsAudioMixFinished);
+                mEventEmitter.receiveEvent(getTargetId(), Events.AUDIO_MIX_INFO.toString(), event);
             }
         });
     }
