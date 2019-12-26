@@ -2,7 +2,7 @@
 
 ### 概述
 
-pili-streaming-react-native 底层基于 [PLDroidMediaStreaming](https://github.com/pili-engineering/PLDroidMediaStreaming) (Android) 和 [PLMediaStreamingKit](https://github.com/pili-engineering/PLMediaStreamingKit)（iOS) ，支持在 React Native 项目中进行直播推流。
+pili-streaming-react-native 是支持 React Native 项目添加直播推流功能的 SDK，底层基于 [PLDroidMediaStreaming](https://github.com/pili-engineering/PLDroidMediaStreaming) (Android) 和 [PLMediaStreamingKit](https://github.com/pili-engineering/PLMediaStreamingKit)（iOS) 实现。
 
 ### 安装
 
