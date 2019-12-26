@@ -1,8 +1,8 @@
 # Pili 推流 SDK for react-native
 
 ### 概述
-pili-streaming-react-native 底层基于 [PLDroidMediaStreaming](https://github.com/pili-engineering/PLDroidMediaStreaming) (Android)  和 [PLMediaStreamingKit](https://github.com/pili-engineering/PLMediaStreamingKit)（iOS) ，在 React Native 上实现了基本的直播功能的 SDK。后续还会陆续会增加录屏推流，图片推流等高级用法。
 
+pili-streaming-react-native 底层基于 [PLDroidMediaStreaming](https://github.com/pili-engineering/PLDroidMediaStreaming) (Android) 和 [PLMediaStreamingKit](https://github.com/pili-engineering/PLMediaStreamingKit)（iOS) ，支持在 React Native 项目中进行直播推流。
 
 ### 安装
 
@@ -99,12 +99,12 @@ function Foo() {
     <Streaming
       rtmpURL="..."
       profile={{
-        video: {
+        videoStreamingSetting: {
           fps: 30,
           bps: 800 * 1024,
           maxFrameInterval: 60
         },
-        audio: {
+        audioStreamingSetting: {
           rate: 44100,
           bitrate: 96 * 1024,
         },
@@ -114,3 +114,5 @@ function Foo() {
   )
 }
 ```
+
+更多高级功能配置，可以参考 [Demo](./demo/App.js)
