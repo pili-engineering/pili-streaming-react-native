@@ -36,6 +36,15 @@ target 'pili_startkit' do
   pod 'PLMediaStreamingKit'
   pod 'pili-react-native', :path => '../node_modules/pili-streaming-react-native/ios/pili-react-native'
 
+  # react-native-file-selector begin
+  use_native_modules!
+  pod 'RNFileSelector', :path => '../node_modules/react-native-file-selector/ios'
+  use_frameworks!
+  pod 'FileBrowser', :git => 'https://github.com/prscX/FileBrowser'
+  # react-native-file-selector end
+
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
   target 'pili_startkitTests' do
     inherit! :search_paths
     # Pods for testing
