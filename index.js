@@ -440,11 +440,6 @@ Streaming.propTypes = _objectSpread2({
       channel: oneOf(microphoneChannels),
       isAecEnable: P.bool
     }),
-    // screenSetting: P.shape({
-    //   width: P.number, // 单位：像素，全屏传 `0`，iOS 不支持
-    //   height: P.number, // 单位：像素，全屏传 `0`，iOS 不支持
-    //   dpi: P.number // 要求大于 0，iOS 不支持
-    // }),
     quicEnable: P.bool,
     bitrateAdjustMode: oneOf(bitrateAdjustModes),
     adaptiveBitrateRange: P.shape({
