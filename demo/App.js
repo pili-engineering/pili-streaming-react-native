@@ -23,7 +23,7 @@ export default class App extends Component {
       rtmpURL: 'rtmp://pili-publish.qnsdk.com/sdk-live/111',
       camera: 'back',
       muted: false,
-      zoom: 1,
+      zoom: 0,
       focus: false,
       started: true,
 
