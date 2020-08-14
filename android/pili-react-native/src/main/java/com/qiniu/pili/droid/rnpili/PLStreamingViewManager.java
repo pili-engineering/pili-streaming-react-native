@@ -105,10 +105,14 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
         mReactContext = reactContext;
         mEventEmitter = mReactContext.getJSModule(RCTEventEmitter.class);
 
-        mCameraPreviewFrameView = new CameraPreviewFrameView(mReactContext);
-        mCameraPreviewFrameView.setListener(this);
-        mCameraPreviewFrameView.setLayoutParams(
-                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+         Log.i(TAG, "mCameraPreviewFrameView："+(mCameraPreviewFrameView==null));
+if(mCameraPreviewFrameView==null){
+    mCameraPreviewFrameView = new CameraPreviewFrameView(mReactContext);
+    mCameraPreviewFrameView.setListener(this);
+    mCameraPreviewFrameView.setLayoutParams(
+            new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+}
         mReactContext.addLifecycleEventListener(this);
         return mCameraPreviewFrameView;
     }
