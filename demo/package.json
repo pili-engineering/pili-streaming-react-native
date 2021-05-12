@@ -9,7 +9,7 @@
     "installSDK": "yarn add \"./$(npm pack ..)\""
   },
   "dependencies": {
-    "merge": "^1.2.1",
+    "merge": "^2.1.1",
     "pili-streaming-react-native": "2.0.0",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
