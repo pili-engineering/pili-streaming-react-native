@@ -13,7 +13,7 @@
     "pili-streaming-react-native": "2.0.0",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
-    "react-native": "0.61.5",
+    "react-native": "0.62.3",
     "react-native-file-selector": "^1.0.0",
     "react-native-fs": "^2.16.2"
   },
