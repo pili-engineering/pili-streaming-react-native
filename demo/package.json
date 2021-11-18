@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "merge": "^1.2.1",
-    "pili-streaming-react-native": "2.0.0",
+    "pili-streaming-react-native": "git+https://github.com/pili-engineering/pili-streaming-react-native.git#v3.1.0",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
     "react-native": "0.61.5",
-    "react-native-file-selector": "^1.0.0",
+    "react-native-file-selector": "^1.0.2",
     "react-native-fs": "^2.16.2"
   },
   "devDependencies": {
