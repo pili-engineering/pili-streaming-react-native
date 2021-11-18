@@ -186,7 +186,7 @@ public class PLStreamingViewManager extends SimpleViewManager<CameraPreviewFrame
                 .setQuicEnable(isQuicEnable)
                 .setEncoderRCMode(encoderRCMode == 0 ? StreamingProfile.EncoderRCModes.QUALITY_PRIORITY
                         : StreamingProfile.EncoderRCModes.BITRATE_PRIORITY)
-                .setDnsManager(Utils.getMyDnsManager())
+                .setDnsManager(Utils.getMyDnsManager(mReactContext))
                 .setStreamStatusConfig(new StreamingProfile.StreamStatusConfig(streamStatusConfig))
                 .setEncodingOrientation(encodeOrientation == 0 ? StreamingProfile.ENCODING_ORIENTATION.PORT
                         : StreamingProfile.ENCODING_ORIENTATION.LAND)
