@@ -6,11 +6,17 @@ pili-streaming-react-native 是支持 React Native 项目添加直播推流功�
 
 ### 安装
 
-##### 1. 通过 npm 安装依赖包
+##### 1. 安装依赖包
 
-```shell
-npm i --save pili-streaming-react-native
+需通过指定 github 地址的方式安装指定版本依赖包
+
+```json
+"dependencies": {
+  "pili-streaming-react-native": "git+https://github.com/pili-engineering/pili-streaming-react-native.git#vx.y.z"
+}
 ```
+
+其中，x、y、z 需替换成具体的版本号，具体版本号可通过[版本记录](https://github.com/pili-engineering/pili-streaming-react-native/tags)获取
 
 ##### 2. 添加 android 支持
 
