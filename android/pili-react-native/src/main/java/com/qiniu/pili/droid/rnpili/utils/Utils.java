@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 public class Utils {
-    public static DnsManager getMyDnsManager() {
+    public static DnsManager getMyDnsManager(Context context) {
         IResolver r0 = new DnspodFree();
-        IResolver r1 = AndroidDnsServer.defaultResolver();
+        IResolver r1 = AndroidDnsServer.defaultResolver(context);
         IResolver r2 = null;
         try {
             r2 = new Resolver(InetAddress.getByName("119.29.29.29"));
