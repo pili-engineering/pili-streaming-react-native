@@ -1132,10 +1132,10 @@ base-64@^0.1.0:
   resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
   integrity sha1-eAqZyE59YAJgNhURxId2E78k9rs=
 
-base64-js@^1.1.2, base64-js@^1.2.3:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
-  integrity sha512-mLQ4i2QO1ytvGWFWmcngKO//JXAQueZvwEKtjgQFM4jIK0kU+ytMfplL8j+n5mspOfjHwoAg+9yhb7BwAHm36g==
+base64-js@^1.1.2, base64-js@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
+  integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
 base@^0.11.1:
   version "0.11.2"
@@ -3498,10 +3498,10 @@ pify@^4.0.1:
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
-pili-streaming-react-native@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/pili-streaming-react-native/-/pili-streaming-react-native-2.0.0.tgz#33ffd7d909ee0a31f8a93f7377514860d984ae71"
-  integrity sha512-XrjfpicoCR8zPmIb9+ph4bgio3TubLftLpuB6enObblUMhFm06eKfDsSD7pRn2dL9yAzTKycRU774lMgg+K8PQ==
+"pili-streaming-react-native@git+https://github.com/pili-engineering/pili-streaming-react-native.git#v3.0.0":
+  version "3.0.0"
+  uid "4a81552314b83ac5b1bf150dc1068acd6fa0750e"
+  resolved "git+https://github.com/pili-engineering/pili-streaming-react-native.git#4a81552314b83ac5b1bf150dc1068acd6fa0750e"
 
 pirates@^4.0.0:
   version "4.0.1"
@@ -3518,13 +3518,12 @@ pkg-dir@^3.0.0:
     find-up "^3.0.0"
 
 plist@^3.0.0, plist@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/plist/-/plist-3.0.1.tgz#a9b931d17c304e8912ef0ba3bdd6182baf2e1f8c"
-  integrity sha512-GpgvHHocGRyQm74b6FWEZZVRroHKE1I0/BTjAmySaohK+cUn+hZpbqXkc3KWgW3gQYkqcQej35FohcT0FRlkRQ==
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/plist/-/plist-3.0.4.tgz#a62df837e3aed2bb3b735899d510c4f186019cbe"
+  integrity sha512-ksrr8y9+nXOxQB2osVNqrgvX/XQPOXaU4BQMKjYq8PvaY1U18mo+fKgBSwzK+luSyinOuPae956lSVcBwxlAMg==
   dependencies:
-    base64-js "^1.2.3"
+    base64-js "^1.5.1"
     xmlbuilder "^9.0.7"
-    xmldom "0.1.x"
 
 plugin-error@^0.1.2:
   version "0.1.2"
@@ -3619,10 +3618,10 @@ react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
-react-native-file-selector@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-file-selector/-/react-native-file-selector-1.0.0.tgz#d889fb633a2f84fbad8ebf263c8b60a100993542"
-  integrity sha512-z3pU6gCSt6jPWe9V1hCjhFEVbqpQ7h7w/Y3XhnDjcN+BCRm2fv5YIRKX1l/Umk1SE4jmSumU5qoYhptagAnyCQ==
+react-native-file-selector@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-file-selector/-/react-native-file-selector-1.0.2.tgz#2797e92c8489aa68c1b79e86f4ecb92a94f50257"
+  integrity sha512-7DLZ+7tOx+Q9haSgjVe3CpM+sbhqFpIWHC7r5GtX9VadqKPDLYyU8aJJ2MpqKd7xkcsTPwi+biBtSw35LQMUnA==
 
 react-native-fs@^2.16.2:
   version "2.16.2"
@@ -4594,11 +4593,6 @@ xmldoc@^1.1.2:
   integrity sha512-ruPC/fyPNck2BD1dpz0AZZyrEwMOrWTO5lDdIXS91rs3wtm4j+T8Rp2o+zoOYkkAxJTZRPOSnOGei1egoRmKMQ==
   dependencies:
     sax "^1.2.1"
-
-xmldom@0.1.x:
-  version "0.1.27"
-  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.27.tgz#d501f97b3bdb403af8ef9ecc20573187aadac0e9"
-  integrity sha1-1QH5ezvbQDr4757MIFcxh6rawOk=
 
 xpipe@^1.0.5:
   version "1.0.5"
