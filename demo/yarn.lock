@@ -2496,11 +2496,9 @@ json-stable-stringify@^1.0.1:
     jsonify "~0.0.0"
 
 json5@^2.1.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/json5/-/json5-2.1.1.tgz#81b6cb04e9ba496f1c7005d07b4368a2638f90b6"
-  integrity sha512-l+3HXD0GEI3huGq1njuqtzYK8OYJyXMkOLtQ53pjWh89tvWS2h6l+1zMkYWqlb57+SiQodKZyvMEFb2X+KrFhQ==
-  dependencies:
-    minimist "^1.2.0"
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.3.tgz#78cd6f1a19bdc12b73db5ad0c61efd66c1e29283"
+  integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
 
 jsonfile@^2.1.0:
   version "2.4.0"
@@ -3498,10 +3496,10 @@ pify@^4.0.1:
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
-pili-streaming-react-native@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/pili-streaming-react-native/-/pili-streaming-react-native-2.0.0.tgz#33ffd7d909ee0a31f8a93f7377514860d984ae71"
-  integrity sha512-XrjfpicoCR8zPmIb9+ph4bgio3TubLftLpuB6enObblUMhFm06eKfDsSD7pRn2dL9yAzTKycRU774lMgg+K8PQ==
+"pili-streaming-react-native@git+https://github.com/pili-engineering/pili-streaming-react-native.git#v3.0.0":
+  version "3.0.0"
+  uid "4a81552314b83ac5b1bf150dc1068acd6fa0750e"
+  resolved "git+https://github.com/pili-engineering/pili-streaming-react-native.git#4a81552314b83ac5b1bf150dc1068acd6fa0750e"
 
 pirates@^4.0.0:
   version "4.0.1"
@@ -3619,10 +3617,10 @@ react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
-react-native-file-selector@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-file-selector/-/react-native-file-selector-1.0.0.tgz#d889fb633a2f84fbad8ebf263c8b60a100993542"
-  integrity sha512-z3pU6gCSt6jPWe9V1hCjhFEVbqpQ7h7w/Y3XhnDjcN+BCRm2fv5YIRKX1l/Umk1SE4jmSumU5qoYhptagAnyCQ==
+react-native-file-selector@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-file-selector/-/react-native-file-selector-1.0.2.tgz#2797e92c8489aa68c1b79e86f4ecb92a94f50257"
+  integrity sha512-7DLZ+7tOx+Q9haSgjVe3CpM+sbhqFpIWHC7r5GtX9VadqKPDLYyU8aJJ2MpqKd7xkcsTPwi+biBtSw35LQMUnA==
 
 react-native-fs@^2.16.2:
   version "2.16.2"
